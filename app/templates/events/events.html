@@ -1,0 +1,415 @@
+<!-- app/templates/events/events.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/events.css') }}">
+
+  <!-- FAB Admin -->
+  <style>
+    .fab-admin {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      display: none;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      place-items: center;
+      color: #fff;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 100%);
+      box-shadow: 0 12px 28px rgba(211, 47, 47, .35);
+      border: 1px solid rgba(255, 255, 255, .15);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    }
+
+    .fab-admin:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: brightness(1.03);
+      box-shadow: 0 16px 36px rgba(211, 47, 47, .45);
+    }
+
+    .fab-admin i {
+      font-size: 28px;
+    }
+
+    .fab-admin.show {
+      display: grid;
+    }
+
+    /* ==== Clamp ข้อความรายละเอียด ==== */
+    .news-content .clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      position: relative;
+      padding-right: 18px;
+    }
+
+    .news-content .clamp-3.ellipsed::after {
+      content: '…';
+      position: absolute;
+      right: 6px;
+      bottom: 2px;
+      color: #b0b6c1;
+      /* เทาอ่อน */
+      font-weight: 600;
+      line-height: 1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="sidebar close">
+    <header>
+      <div class="image-text">
+        <span class="image">
+          <img src="{{ url_for('static', path='img/IMG_3900.PNG') }}" alt="logo">
+        </span>
+        <div class="text header-text">
+          <span class="name">TU-Gether</span>
+          <span class="profession">Thammasat University</span>
+          <span id="user-name" style="display:block;font-weight:600;color:#d32f2f;"></span>
+        </div>
+      </div>
+      <i class='bx bx-chevron-right toggle'></i>
+    </header>
+
+    <div class="menu-bar">
+      <div class="menu">
+        <ul class="menu-links">
+          <li class="nav-links">
+            <a href="/main">
+              <i class='bx bx-home icon'></i>
+              <span class="text nav-text">Home</span>
+            </a>
+          </li>
+          <li class="nav-links">
+            <a href="/events">
+              <i class='bx bx-party icon'></i>
+              <span class="text nav-text">Event</span>
+            </a>
+          </li>
+          <li class="nav-links">
+            <a href="/me/registrations" id="link-my-registrations">
+              <i class='bx bx-history icon'></i>
+              <span class="text nav-text">History</span>
+            </a>
+          </li>
+
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+
+          <li class="nav-links">
+            <a href="#" id="logout-link">
+              <i class='bx bx-log-out icon'></i>
+              <span class="text nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="content">
+    <h1 class="title">TU EVENT
+      <button id="events-reload"
+        style="margin-left:12px;padding:8px 12px;border-radius:10px;border:1px solid #e5e7eb;cursor:pointer;">
+        <i class='bx bx-refresh'></i> Reload
+      </button>
+    </h1>
+    <div class="events-filter-bar">
+      <div class="ef-group">
+        <label for="f-text">ค้นหา</label>
+        <input id="f-text" type="text" placeholder="พิมพ์ชื่อกิจกรรม..." autocomplete="off">
+      </div>
+      <div class="ef-group">
+        <label for="f-faculty">คณะ</label>
+        <select id="f-faculty">
+          <option value="">ทั้งหมด</option>
+          {% for it in items %}
+          {% if it.faculty %}
+          <option value="{{ it.faculty }}">{{ it.faculty }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <div class="ef-group">
+        <label for="f-category">หมวดหมู่</label>
+        <select id="f-category">
+          <option value="">ทั้งหมด</option>
+          {% for it in items %}
+          {% if it.category %}
+          <option value="{{ it.category }}">{{ it.category }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+      <button id="f-clear" class="ef-clear"><i class='bx bx-x'></i> ล้างตัวกรอง</button>
+    </div>
+    <div class="news-container">
+      {% if items and items|length > 0 %}
+      {% for it in items %}
+      <div class="news-card" data-faculty="{{ it.faculty or '' }}" data-category="{{ it.category or '' }}">
+
+        <img src="{{ it.picture_url or 'https://picsum.photos/800/450?blur=2' }}" alt="{{ it.title }}">
+        <div class="news-content">
+          <h2>{{ it.title }}</h2>
+          <!-- เพิ่ม class clamp-3 -->
+          <p class="desc clamp-3">{{ it.detail }}</p>
+          <p class="date">
+            <i class='bx bx-calendar'></i>
+            {% set event_date = it.event_date | default('') %}
+            <span>{{ event_date.split('T')[0] if 'T' in event_date else event_date }}</span>
+          </p>
+          <p class="cap">
+            {% set cur = it.current_count | default(0) %}
+            {% set mx = it.max_register | default('—') %}
+            <i class='bx bx-group'></i> {{ cur }}/{{ mx }}
+          </p>
+          {% set _src = it.status.value | default(it.status.name | default(it.status | string)) %}
+          {% set key = _src | string | replace('StatusEnum.', '') | upper %}
+          {% set klass = key | lower %}
+          {% set label_map = {'OPEN':'Open','CLOSE':'Close','FULL':'Full','UPCOMING':'Upcoming'} %}
+
+          <div class="status-{{ klass }}">
+            {{ label_map[key] if key in label_map else key }}
+          </div>
+          <div class="button-group">
+            <a href="/events/{{ it.event_id }}" class="visit-btn">รายละเอียดเพิ่มเติม</a>
+            <button class="register-btn" data-eid="{{ it.event_id }}"
+              data-status="{{ (it.status or '') | string | lower }}">ลงทะเบียน</button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <p style="opacity:.7;padding:16px;">ยังไม่มีกิจกรรม</p>
+      {% endif %}
+    </div>
+  </main>
+  <div id="modal-backdrop" class="modal-backdrop"></div>
+
+  <div id="custom-modal" class="modal">
+    <div class="modal-card" id="modal-card">
+      <div class="modal-header">
+        <div class="modal-icon" id="modal-icon">
+          <i class='bx bx-check'></i>
+        </div>
+        <div class="modal-title" id="modal-title">แจ้งเตือน</div>
+      </div>
+      <div class="modal-body">
+        <p id="modal-message">ข้อความรายละเอียด...</p>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn primary" id="modal-close-btn">ตกลง</button>
+      </div>
+    </div>
+  </div>
+  <!-- FAB Admin -->
+  <a href="/admin" class="fab-admin" id="fab-admin" title="Admin Console"><i class='bx bxs-cog'></i></a>
+
+  <script>
+    /* ================= NEW MODAL LOGIC ================= */
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const customModal = document.getElementById('custom-modal');
+    const modalCard = document.getElementById('modal-card');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalIcon = document.getElementById('modal-icon');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+
+    // ฟังก์ชันเรียกใช้ Modal
+    function showModal(title, message, type = 'success') {
+      // 1. ตั้งค่าข้อความ
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+
+      // 2. รีเซ็ต Class สีเก่าออก
+      modalCard.classList.remove('success', 'error');
+
+      // 3. ตั้งค่าสีและไอคอนตามประเภท
+      if (type === 'success') {
+        modalCard.classList.add('success');
+        modalIcon.innerHTML = "<i class='bx bx-check'></i>";
+      } else {
+        modalCard.classList.add('error');
+        modalIcon.innerHTML = "<i class='bx bx-x'></i>";
+      }
+
+      // 4. แสดงผล
+      modalBackdrop.classList.add('show');
+      customModal.classList.add('open');
+    }
+
+    // ฟังก์ชันปิด Modal
+    function closeModal() {
+      modalBackdrop.classList.remove('show');
+      customModal.classList.remove('open');
+    }
+
+    // Event ปิด Modal
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalBackdrop.addEventListener('click', closeModal);
+
+    function $(sel, root = document) { return root.querySelector(sel); }
+    function $all(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+    async function apiFetch(url, opts = {}) {
+      const r = await fetch(url, { credentials: "include", ...opts });
+      if (!r.ok) {
+        let msg = "เกิดข้อผิดพลาด";
+        try { const j = await r.json(); msg = j.detail || msg; } catch { }
+        const err = new Error(msg); err.status = r.status; throw err;
+      }
+      if (r.status === 204) return null;
+      try { return await r.json(); } catch { return null; }
+    }
+
+    const body = document.querySelector("body"),
+      sidebar = body.querySelector(".sidebar"),
+      toggle = body.querySelector(".toggle");
+    if (localStorage.getItem("sidebar") === "open") sidebar.classList.remove("close");
+    else sidebar.classList.add("close");
+    toggle.addEventListener("click", () => {
+      sidebar.classList.toggle("close");
+      localStorage.setItem("sidebar", sidebar.classList.contains("close") ? "close" : "open");
+    });
+
+    document.getElementById("logout-link")?.addEventListener("click", async (e) => {
+      e.preventDefault();
+      try { await fetch("/api/auth/logout", { method: "POST", credentials: "include" }); } catch { }
+      window.location.href = "/auth";
+    });
+
+    /** ใส่ชื่อ และโชว์เมนู/ปุ่ม Admin ถ้า role=admin **/
+    (async () => {
+      try {
+        const r = await fetch("/api/auth/me");
+        if (r.ok) {
+          const me = await r.json();
+          const el = document.getElementById("user-name");
+          if (el && me.display_name) el.textContent = `👤 ${me.display_name}`;
+          if (me.role === "admin") {
+            const fab = document.getElementById("fab-admin");
+            if (fab) fab.style.display = "grid";
+          }
+        }
+      } catch { }
+    })();
+
+    /* ================= Registration Logic ================= */
+    (async () => {
+      const cards = $all(".news-card");
+      for (const card of cards) {
+        const btn = $(".register-btn", card);
+        if (!btn) continue;
+        const eid = btn.getAttribute("data-eid");
+        if (!eid) continue;
+
+        try {
+          const st = await apiFetch(`/api/events/${eid}/register/status`, { method: "GET" });
+          if (st?.registered) {
+            btn.classList.add("cancel");
+            btn.textContent = "ยกเลิกการลงทะเบียน";
+          } else {
+            btn.classList.remove("cancel");
+            btn.textContent = "ลงทะเบียน";
+          }
+        } catch (e) {
+          if (e.status !== 401) {/* เงียบไว้ */ }
+        }
+
+
+        btn.addEventListener("click", async () => {
+          const eid = btn.getAttribute("data-eid");
+          if (!eid) return;
+          btn.disabled = true; const old = btn.textContent;
+          btn.textContent = btn.classList.contains("cancel") ? "กำลังยกเลิก..." : "กำลังลงทะเบียน...";
+          try {
+            if (btn.classList.contains("cancel")) {
+              await apiFetch(`/api/events/${eid}/register`, { method: "DELETE" });
+              btn.classList.remove("cancel");
+              btn.textContent = "ลงทะเบียน";
+              showModal("สำเร็จ!", "คุณได้ยกเลิกการลงทะเบียนเรียบร้อยแล้ว", "success");
+            } else {
+              await apiFetch(`/api/events/${eid}/register`, { method: "POST" });
+              btn.classList.add("cancel");
+              btn.textContent = "ยกเลิกการลงทะเบียน";
+              showModal("ลงทะเบียนสำเร็จ!", "ขอบคุณที่เข้าร่วมกิจกรรมกับเรา", "success");
+            }
+          } catch (e) {
+            if (e.status === 401) window.location.href = "/auth";
+            else { btn.textContent = old; showModal("เกิดข้อผิดพลาด", e.message || "ไม่สามารถดำเนินการได้", "error"); }
+          } finally { btn.disabled = false; }
+        });
+      }
+    })();
+
+    // ปุ่ม Reload
+    document.getElementById("events-reload")?.addEventListener("click", () => location.reload());
+
+    // ปิดปุ่มตามสถานะ
+    (function () {
+      const cards = Array.from(document.querySelectorAll(".news-card"));
+      const labelByStatus = {
+        "upcoming": "ยังไม่เปิดลงทะเบียน",
+        "close": "ปิดรับสมัครแล้ว",
+        "full": "เต็มแล้ว",
+      };
+      for (const card of cards) {
+        const btn = card.querySelector(".register-btn");
+        if (!btn) continue;
+        const st = (btn.getAttribute("data-status") || "").toLowerCase();
+        if (st && st !== "open") {
+          btn.disabled = true;
+          btn.title = labelByStatus[st] || "ไม่พร้อมลงทะเบียน";
+          if (labelByStatus[st]) btn.textContent = labelByStatus[st];
+        }
+      }
+    })();
+
+    // ✅ ตรวจว่ามีการตัดบรรทัดหรือไม่ ถ้ามีเติม …
+    (function () {
+      const els = Array.from(document.querySelectorAll('.news-content .clamp-3'));
+      for (const el of els) {
+        if (el.scrollHeight - el.clientHeight > 1) {
+          el.classList.add('ellipsed');
+        }
+      }
+    })();
+
+  </script>
+
+  <script src="{{ url_for('static', path='js/events_filter.js') }}?v=dev1"></script>
+</body>
+
+</html>

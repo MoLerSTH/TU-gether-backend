@@ -1,0 +1,70 @@
+# -------------------------
+# Python
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+ENV/
+.venv/
+.env
+*.env
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Byte-compiled
+*.so
+
+# Logs
+*.log
+
+# -------------------------
+# Environment variables (VERY IMPORTANT)
+# -------------------------
+.env
+*.env
+
+# Firebase private key
+app/key_admin/*.json
+
+# -------------------------
+# IDE / Editor files
+# -------------------------
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# -------------------------
+# OS generated files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Node / frontend (if exist)
+# -------------------------
+node_modules/

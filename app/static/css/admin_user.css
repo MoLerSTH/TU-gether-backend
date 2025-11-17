@@ -1,0 +1,537 @@
+/* app/static/css/admin_user.css */
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f9fafb;
+  margin: 0;
+  padding: 0;
+  /* --- FIX: Added styles for sticky footer --- */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- FIX: Added wrapper for sticky footer --- */
+.content-wrapper {
+  flex-grow: 1; /* This makes the content area grow and push the footer down */
+}
+
+/* --- Header --- */
+/* (This style seems unused as HTML uses .admin-header) */
+.top-bar h1 {
+  font-size: 22px;
+  color: #111827;
+  margin: 0;
+}
+
+/* FIX: Removed .control-group styles */
+
+#searchInput {
+  flex: 1;
+  min-width: 220px;
+  max-width: 400px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.2s;
+  font-size: 15px;
+}
+#searchInput:focus {
+  border-color: #d32f2f ;
+  /* FIX: Changed shadow color to red */
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15); 
+}
+
+/* --- Buttons --- */
+
+.primary-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.primary-btn:hover {
+  background-color: #c62828; /* FIX: Darker red for hover */
+}
+
+/* New Secondary Button Style (for Cancel) */
+.secondary-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.secondary-btn:hover {
+  background-color: #f9fafb;
+}
+
+/* FIX: Added Danger Button Style (for Delete Confirmation) */
+.danger-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #ef4444; /* Red */
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+.danger-btn:hover {
+  background-color: #dc2626; /* Darker red */
+}
+
+/* --- FIX: Tab Styles (Replaces Toggle Buttons) --- */
+.view-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: -1px; /* Pulls tabs down onto the border */
+  z-index: 1; /* Ensure tabs are on top */
+  position: relative;
+}
+
+.toggle-btn {
+  /* This is now a tab */
+  background-color: #f3f4f6; /* Inactive tab color */
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  border-bottom: none; /* No bottom border */
+  padding: 10px 16px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: 0.9rem;
+  display: flex; /* For icons */
+  align-items: center;
+  gap: 6px;
+}
+
+.toggle-btn:hover {
+  background-color: #e5e7eb; /* Light hover */
+}
+
+.toggle-btn.active {
+  background-color: #fff; /* Active tab is white (connects to table) */
+  color: #d32f2f; /* Use primary color for text */
+  font-weight: 600;
+  border-color: #e5e7eb;
+  /* This magic line makes it look connected */
+  border-bottom: 1px solid #fff; 
+}
+
+
+/* --- FIX: Table Container & Controls --- */
+.table-container {
+  background-color: white;
+  margin: 20px;
+  border-radius: 12px;
+  padding: 0; /* Changed from 20px to 0 */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  border: 1px solid #e5e7eb; /* Add border for tabs to connect to */
+}
+
+/* FIX: New wrapper for header controls */
+.table-header-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* Aligns tabs and search bar */
+  padding: 20px 20px 0 20px; /* No bottom padding */
+  border-bottom: 1px solid #e5e7eb; /* Line separating controls from table */
+}
+
+.table-tpRight-container{
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  margin-bottom: 0; /* Removed margin */
+  padding-bottom: 12px; /* Align bottom with tabs */
+  margin-bottom: 40px; 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #374151;
+  vertical-align: middle; /* Align content vertically */
+}
+
+/* FIX: Add padding to first/last cells to align with header */
+th:first-child, td:first-child {
+  padding-left: 20px;
+}
+th:last-child, td:last-child {
+  padding-right: 20px;
+}
+
+th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  color: #4b5563; /* Darker gray for header text */
+  font-size: 0.85rem; /* Slightly smaller header text */
+  text-transform: uppercase; /* Uppercase headers */
+  letter-spacing: 0.05em; /* Add spacing to header text */
+}
+
+.action-col {
+  text-align: right; /* Align action buttons to the right */
+  width: 120px; /* Give fixed width */
+  white-space: nowrap;
+}
+
+.icon-btn {
+  border: none;
+  background: transparent; /* Make icon buttons transparent */
+  color: #6b7280; /* Gray icon color */
+  width: 34px;
+  height: 34px;
+  border-radius: 8px; /* Rounded square */
+  cursor: pointer;
+  margin: 0 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px; /* Larger icons */
+  transition: all 0.2s ease;
+  box-shadow: none; /* Remove shadow */
+}
+
+/* FIX: Add transition for expand button icon */
+.expand-btn i {
+  transition: transform 0.2s ease-in-out;
+}
+.expand-btn.expanded {
+  /* FIX: Change rotation to chevron-up style */
+  transform: rotate(180deg);
+}
+
+
+.icon-btn:hover {
+  transform: scale(1.1); /* Scale on hover */
+  background: #f3f4f6; /* Light gray background on hover */
+}
+
+.edit-btn:hover {
+  color: #0284c7; /* Blue color on hover */
+  background: #e0f2fe;
+}
+
+.delete-btn:hover {
+  color: #dc2626; /* Red color on hover */
+  background: #fee2e2;
+}
+
+/* FIX: New styles for the column-aligned details row */
+.details-row {
+  /* Add a subtle background to distinguish the row */
+  background-color: #f9fafb; 
+}
+.details-row.hidden {
+  /* Simple hide/show - will be controlled by JS style.display */
+  display: none;
+}
+
+.details-row td {
+  /* Override default padding to be slightly different */
+  padding: 12px 16px;
+  /* Align content to the top */
+  vertical-align: top;
+  border-bottom: 1px solid #e5e7eb; /* Match table border */
+}
+
+/* This is the cell with actual content */
+.details-cell {
+  line-height: 1.4;
+}
+
+.details-cell strong {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-weight: 600;
+  display: block;
+}
+
+.details-cell span {
+  font-size: 0.9rem;
+  color: #111827;
+  word-break: break-word; /* Break long text */
+}
+
+/* Ensure first and last cell padding still matches header */
+.details-row td:first-child {
+  padding-left: 20px;
+}
+.details-row td:last-child {
+  padding-right: 20px;
+}
+
+
+/* Pagination */
+#pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  /* FIX: Changed margin to padding for better spacing */
+  padding: 20px;
+  flex-shrink: 0; /* Prevents the pagination from shrinking */
+}
+
+.page-btn {
+  border: 1px solid #d1d5db;
+  background: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.page-btn.active {
+  background: #d32f2f ;
+  color: white;
+  border-color: #d32f2f ;
+}
+
+/* --- Modal (Redesigned) --- */
+.modal {
+  display: none; /* FIX: Removed 'display: flex;' from here */
+  position: fixed;
+  inset: 0;
+  background-color: rgba(17, 24, 39, 0.6); /* Darker overlay */
+  backdrop-filter: blur(4px); /* Blur effect */
+  /* 'display: flex' will be added by JS when opened */
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* Padding for small screens */
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 650px; /* Wider modal */
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  animation: slideUp 0.3s ease-out;
+  /* Added for flexible content */
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh; /* Max height to prevent overflow */
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.close-btn { /* Replaced .close */
+  font-family: inherit;
+  font-size: 1.75rem; /* Larger 'x' */
+  font-weight: 300;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 0.2s ease;
+}
+.close-btn:hover {
+  color: #111827;
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto; /* Allow scrolling for long forms */
+}
+
+/* Form Layout using Grid */
+#userForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2-column layout */
+  gap: 20px 24px; /* Row and column gap */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* Space between label and input */
+}
+
+.form-group-full {
+  grid-column: 1 / -1; /* Make this group span both columns */
+}
+
+#userForm label {
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+#userForm input[type="text"],
+#userForm input[type="password"],
+#userForm input[type="email"],
+#userForm input[type="number"],
+#userForm select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: 0.2s;
+  box-sizing: border-box; /* Crucial for padding to work */
+  background-color: #fff;
+}
+
+#userForm input:focus,
+#userForm select:focus {
+  border-color: #d32f2f;
+  /* FIX: Changed shadow color to red */
+  box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.15);
+  outline: none;
+}
+
+/* Style for disabled inputs */
+#userForm input:disabled {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+#userForm small {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: -2px;
+}
+
+/* Student Fields Styling */
+#studentFields {
+  grid-column: 1 / -1; /* Span full width */
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+.hidden { 
+  display: none; 
+}
+
+.student-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* 3 columns for Faculty, Major, Year */
+  gap: 20px 24px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+@keyframes slideUp {
+  from {transform: translateY(20px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
+
+/* Notification */
+#notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  display: none;
+  z-index: 9999;
+}
+#notification.success { background-color: #22c55e; }
+#notification.error { background-color: #ef4444; }
+
+/* Styles for the new header */
+.admin-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:#fff;border-bottom:1px solid #eceff3;position:sticky;top:0;z-index:10}
+.admin-title{margin:0;font-size:20px;display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #e5e7eb;border-radius:999px;background:#fff;color:#111827;text-decoration:none;cursor:pointer}
+.btn:hover{box-shadow:0 8px 22px rgba(0,0,0,.08)}
+.btn.primary{background:linear-gradient(180deg,var(--brand),var(--brand-dark));border:1px solid transparent;color:#fff;box-shadow:0 8px 22px var(--ring)}
+.btn.outline{background:#ffff;margin-left: 10px;}
+
+/* Responsive adjustments for modal and student fields */
+@media (max-width: 600px) {
+  .modal-body {
+    padding: 16px;
+  }
+  #userForm,
+  .student-fields-grid {
+    grid-template-columns: 1fr; /* Stack to 1 column on small screens */
+  }
+  .modal-header,
+  .modal-footer {
+    padding: 16px;
+  }
+  
+  /* FIX: Stack controls on small screens */
+  .table-header-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px;
+  }
+  .view-toggle {
+    margin-bottom: 0;
+  }
+  .table-tpRight-container {
+    padding-bottom: 0;
+    flex-direction: column;
+    gap: 12px;
+  }
+  #searchInput {
+    max-width: none;
+  }
+  
+  /* FIX: Make details grid 1 column on mobile */
+  /* (This style is no longer needed for column-aligned layout) */
+  /* .details-content { ... } */
+}

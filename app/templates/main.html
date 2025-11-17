@@ -1,0 +1,309 @@
+<!-- app/templates/main.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Main Page{% endblock %}</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/main.css') }}">
+    <style>
+        /* FAB Admin (แสดงเฉพาะ admin) */
+        .fab-admin {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 50;
+            display: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 999px;
+            place-items: center;
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 100%);
+            box-shadow: 0 12px 28px rgba(211, 47, 47, .35);
+            border: 1px solid rgba(255, 255, 255, .15);
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+        }
+
+        .fab-admin:hover {
+            transform: translateY(-2px) scale(1.03);
+            filter: brightness(1.03);
+            box-shadow: 0 16px 36px rgba(211, 47, 47, .45);
+        }
+
+        .fab-admin i {
+            font-size: 28px;
+        }
+
+        .fab-admin.show {
+            display: grid;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar close">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="{{ url_for('static', path='img/IMG_3900.PNG') }}" alt="logo">
+                </span>
+                <div class="text header-text">
+                    <span class="name">TU-Gether</span>
+                    <span class="profession">Thammasat University</span>
+                    <span id="user-name" style="display:block;font-weight:600;color:#d32f2f;"></span>
+                </div>
+            </div>
+            <i class='bx bx-chevron-right toggle'></i>
+        </header>
+
+        <div class="menu-bar">
+            <div class="menu">
+                <ul class="menu-links">
+                    <li class="nav-links">
+                        <a href="/main">
+                            <i class='bx bx-home icon'></i>
+                            <span class="text nav-text">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-links">
+                        <a href="/events">
+                            <i class='bx bx-party icon'></i>
+                            <span class="text nav-text">Event</span>
+                        </a>
+                    </li>
+                    <li class="nav-links">
+                        <a href="/me/registrations" id="link-my-registrations">
+                            <i class='bx bx-history icon'></i>
+                            <span class="text nav-text">History</span>
+                        </a>
+                    </li>
+
+                    {% for _ in range(7) %}
+                    <li class="nav-links">
+                        <div></div>
+                    </li>
+                    {% endfor %}
+
+                    <li class="nav-links">
+                        <a href="#" id="logout-link">
+                            <i class='bx bx-log-out icon'></i>
+                            <span class="text nav-text">Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- FAB Admin -->
+    <a href="/admin" class="fab-admin" id="fab-admin" title="Admin Console"><i class='bx bxs-cog'></i></a>
+
+    <!-- เอา max-w-6xl mx-auto ออก ให้มีแค่ content -->
+    {% block body_container %}
+    <main class="content">
+        <!-- ตัวห่อใหม่ ให้อยู่กลางพื้นที่ content และกำหนดความกว้างสูงสุด -->
+        <div class="main-inner">
+            <div class="slider-container" id="event-slider">
+                <div class="slider-wrapper">
+                    <div class="slide">
+                        <img src="https://ik.imagekit.io/tuGether/events/debate_DWHesq64j.png"
+                            alt="Slider 1: Admission 2025">
+                    </div>
+                    <div class="slide">
+                        <img src="https://ik.imagekit.io/tuGether/events/Screenshot_2025-11-17_201722_7UMhUYJ-h.png"
+                            alt="Slider 2: Social Transformation School">
+                    </div>
+                    <div class="slide">
+                        <img src="https://www.camphub.in.th/wp-content/uploads/2023/01/35062A03-048E-4643-ACAD-D0C632531CA3.jpg"
+                            alt="Slider 3: TU Walk">
+                    </div>
+                    <div class="slide">
+                        <img src="https://www.camphub.in.th/wp-content/uploads/2025/09/3-1024x538.jpg"
+                            alt="Slider 4: Thammasat Library">
+                    </div>
+                </div>
+                <div class="slider-dots-container">
+                    <span class="slider-dot active" onclick="currentSlide(1)"></span>
+                    <span class="slider-dot" onclick="currentSlide(2)"></span>
+                    <span class="slider-dot" onclick="currentSlide(3)"></span>
+                    <span class="slider-dot" onclick="currentSlide(4)"></span>
+                </div>
+            </div>
+
+            <section class="mt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">✨ Latest Events</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+                        <img class="w-full h-40 object-cover"
+                            src="https://www.camphub.in.th/wp-content/uploads/2025/08/IMG_0364-1-e1756324945549.jpg"
+                            alt="Event A Thumbnail">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">ค่ายเยาวชนนักเศรษฐศาสตร์กับสังคม ครั้งที่ 21</h3>
+                            <p class="text-sm text-gray-500 mt-1">🗓️ 15 มกราคม 2569</p>
+                            <p class="text-sm text-gray-700 mt-2 line-clamp-3">
+                                💫 สิ้นสุดการรอคอย… เปิดรับสมัครแล้ววันนี้ ! ค่ายเยาวชนนักเศรษฐศาสตร์กับสังคม ครั้งที่ 21
+                            </p>
+                            <a href="#"
+                                class="mt-3 inline-block text-red-700 font-medium hover:text-red-800 transition">View
+                                Details
+                                &rarr;</a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+                        <img class="w-full h-40 object-cover"
+                            src="https://ik.imagekit.io/tuGether/events/sqr_data-analytic_4GkQn0qq6.png"
+                            alt="Event B Thumbnail">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">
+                                อบรมเชิงปฏิบัติการ Python สำหรับนักศึกษา
+                            </h3>
+                            <p class="text-sm text-gray-500 mt-1">🗓️ 20 - 22 ธันวาคม 2568</p>
+                            <p class="text-sm text-gray-700 mt-2 line-clamp-3">
+                                เรียนรู้พื้นฐานและเทคนิคการเขียนโปรแกรม Python สำหรับงานวิเคราะห์ข้อมูล
+                            </p>
+                            <a href="#"
+                                class="mt-3 inline-block text-red-700 font-medium hover:text-red-800 transition">View
+                                Details
+                                &rarr;</a>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden">
+                        <img class="w-full h-40 object-cover"
+                            src="https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?cs=srgb&dl=pexels-jaime-reimer-1376930-2662116.jpg&fm=jpg"
+                            alt="Event C Thumbnail">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">
+                                คอนเสิร์ต TU Music Festival
+                            </h3>
+                            <p class="text-sm text-gray-500 mt-1">🗓️ 5 กุมภาพันธ์ 2569</p>
+                            <p class="text-sm text-gray-700 mt-2 line-clamp-3">
+                                รวมพลังดนตรีจากหลากหลายวงนักศึกษาในงาน TU Music Festival ที่คุณไม่ควรพลาด!
+                            </p>
+                            <a href="#"
+                                class="mt-3 inline-block text-red-700 font-medium hover:text-red-800 transition">View
+                                Details
+                                &rarr;</a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    {% endblock %}
+
+    <script>
+        const body = document.querySelector("body"),
+            sidebar = body.querySelector(".sidebar"),
+            toggle = body.querySelector(".toggle");
+
+        // Sidebar logic
+        if (localStorage.getItem("sidebar") === "open") {
+            sidebar.classList.remove("close");
+        } else {
+            sidebar.classList.add("close");
+        }
+        toggle.addEventListener("click", () => {
+            sidebar.classList.toggle("close");
+            localStorage.setItem("sidebar", sidebar.classList.contains("close") ? "close" : "open");
+        });
+
+        // ======================= Slider Logic =======================
+        const sliderWrapper = document.querySelector('.slider-wrapper');
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        const totalSlides = slides.length;
+        let slideIndex = 1;
+        let slideInterval;
+
+        function showSlides(n) {
+            if (n > totalSlides) { slideIndex = 1; }
+            if (n < 1) { slideIndex = totalSlides; }
+
+            const offset = -(slideIndex - 1) * 100;
+            sliderWrapper.style.transform = `translateX(${offset}%)`;
+
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[slideIndex - 1].classList.add('active');
+        }
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+            resetInterval();
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+            resetInterval();
+        }
+
+        function startInterval() {
+            slideInterval = setInterval(() => {
+                plusSlides(1);
+            }, 5000);
+        }
+
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startInterval();
+        }
+
+        showSlides(slideIndex);
+        startInterval();
+        // ======================= End Slider Logic =======================
+
+        // Auth + Admin
+        (async () => {
+            try {
+                const r = await fetch("/api/auth/me");
+                if (r.ok) {
+                    const me = await r.json();
+                    const el = document.getElementById("user-name");
+                    if (el && me.display_name) el.textContent = `👤 ${me.display_name}`;
+                    if (me.role === "admin") {
+                        const fab = document.getElementById("fab-admin");
+                        if (fab) fab.classList.add("show");
+                    }
+                }
+            } catch { }
+        })();
+
+        // Logout
+        document.getElementById("logout-link")?.addEventListener("click", async (e) => {
+            e.preventDefault();
+            try { await fetch("/api/auth/logout", { method: "POST" }); } catch { }
+            window.location.href = "/auth";
+        });
+
+        // Highlight active link
+        (function highlightActive() {
+            const path = location.pathname.replace(/\/+$/, '') || '/';
+            document.querySelectorAll('.menu-links a[href]').forEach(a => {
+                const href = (a.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+
+                const matchPath = path === '/main' ? '/' : path;
+                const matchHref = href === '/main' ? '/' : href;
+
+                if (matchHref === matchPath) {
+                    a.classList.add('active');
+                }
+            });
+        })();
+        
+    </script>
+</body>
+
+</html>

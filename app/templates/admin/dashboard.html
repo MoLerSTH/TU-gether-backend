@@ -1,0 +1,70 @@
+<!-- app/templates/admin/dashboard.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+    <header class="header">
+        <a href="/main" class="back-button">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+            </svg>
+            <span>Home</span>
+        </a>
+        
+        <div class="user-profile">
+            <span>Administrator</span>
+            
+            <div class="avatar-placeholder">AD</div>
+            
+        </div>
+    </header>
+    
+    <main class="content-area">
+        <div class="welcome-header">
+            <h1>Welcome back to, Admin Console</h1>
+            <p>What would you like to manage today?</p>
+        </div>
+        
+        
+        <div class="card-container">
+            
+            <a href="/admin/events" class="management-card">
+                <div class="card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12v-.008zM9.75 15h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5v-.008zM7.5 12h.008v.008H7.5v-.008zM9.75 12h.008v.008H9.75v-.008z" />
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>Event Management</h3>
+                    <p>Set up, monitor, and manage all corporate events.</p>
+                </div>
+            </a>
+            
+            <a href="/admin/users" class="management-card">
+                <div class="card-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM8.25 21a6.375 6.375 0 01-3.69-1.002.75.75 0 01.01-1.303A7.875 7.875 0 0112 15.047a7.875 7.875 0 017.44-3.65.75.75 0 01.01 1.303A6.375 6.375 0 0112 21H8.25z" />
+                    </svg>
+                </div>
+                <div class="card-content">
+                    <h3>User Management</h3>
+                    <p>Add, edit, and manage user accounts and permissions.</p>
+                </div>
+            </a>
+            
+        </div>
+    </main>
+    
+</body>
+</html>

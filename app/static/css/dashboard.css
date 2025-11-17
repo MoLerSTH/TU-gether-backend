@@ -1,0 +1,163 @@
+/* app/static/css/dashboard.css */
+/* --- 1. Global Setup & Variables --- */
+:root {
+    --primary-color: #d32f2f;
+    --background-color: #F8F9FA;
+    --card-background: #FFFFFF;
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --border-color: #E5E7EB;
+    
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.1);
+    
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* --- 2. Header Layout --- */
+.header {
+    height: 70px;
+    width: 100%;
+    background: var(--card-background);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 0 40px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.back-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
+}
+.back-button:hover {
+    background-color: #F3F4F6;
+    color: var(--primary-color);
+}
+.back-button svg {
+    width: 20px;
+    height: 20px;
+}
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+/* (UPDATED) ลบ .user-profile img ออก 
+ และเพิ่มคลาสนี้เข้าไปแทน 
+*/
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--border-color); /* สีเทาอ่อน */
+    color: var(--text-secondary); /* สีตัวอักษรเทากลาง */
+    
+    /* จัดให้อยู่กึ่งกลาง */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    font-size: 16px;
+    font-weight: 600;
+}
+
+
+/* --- 3. Dashboard Hub Content --- */
+.content-area {
+    padding: 40px;
+}
+.welcome-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+.welcome-header p {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+}
+.card-container {
+    display: flex;
+    gap: 32px;
+}
+.management-card {
+    flex: 1; 
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 32px;
+    text-decoration: none;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.management-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--primary-color);
+}
+.card-icon {
+    margin-bottom: 20px;
+}
+.card-icon svg {
+    width: 48px;
+    height: 48px;
+    color: var(--primary-color);
+}
+.card-content h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.card-content p {
+    font-size: 16px;
+    color: #666;
+}
+
+/* --- 4. Responsive --- */
+@media (max-width: 900px) {
+    .card-container {
+        flex-direction: column;
+        gap: 24px;
+    }
+    .content-area {
+        padding: 24px;
+    }
+    .header {
+        padding: 0 24px;
+    }
+    .welcome-header h1 {
+        font-size: 28px;
+    }
+}
+@media (max-width: 768px) {
+    .back-button span {
+        display: none;
+    }
+    .header {
+        padding: 0 16px;
+    }
+    .content-area {
+        padding: 16px;
+    }
+}

@@ -1,0 +1,566 @@
+<!-- app/templates/events/detail.html -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ (ev.title or 'รายละเอียดกิจกรรม') }} - รายละเอียดกิจกรรม</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <!-- สไตล์หลักของหน้า detail -->
+  <style>
+  /* ---------- Design Tokens ---------- */
+  :root{
+    --bg: #f6f7fb;
+    --card: #ffffff;
+    --text: #2b2f36;
+    --muted: #6b7280;
+    --brand: #d32f2f;            
+    --brand-600:#b71c1c;
+    --brand-200:#fde2e2;
+    --accent:#f59e0b;
+    --ring: rgba(211,47,47,.15);
+    --shadow: 0 10px 30px rgba(24, 24, 27, .08);
+    --radius-xl: 18px;
+    --radius-lg: 14px;
+    --radius-md: 12px;
+  }
+
+  *{ box-sizing:border-box }
+  html,body{ margin:0; padding:0 }
+  body {
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  padding: 48px 20px;
+  }
+
+  /* ปิดสกอร์ลพื้นหลังเวลาเปิดโมดัล */
+  body.no-scroll{ overflow: hidden; }
+
+  /* ---------- Top Bar (ชื่อผู้ใช้ + Logout) ---------- */
+  .topbar{
+    position: fixed; top: 14px; right: 14px; display:flex; gap:10px; align-items:center; z-index: 10;
+    background: rgba(255,255,255,.7); border: 1px solid #eceff4; border-radius: 999px; padding: 6px 10px;
+    backdrop-filter: blur(8px);
+  }
+  .topbar .user{ font-weight:700; color:#b91c1c; }
+  .topbar a{
+    display:inline-flex; align-items:center; gap:6px; text-decoration:none; color:#111827; font-weight:600;
+    background:#fff; border:1px solid #e5e7eb; padding:6px 10px; border-radius: 999px;
+  }
+  .topbar a:hover{ background:#f9fafb; }
+
+  /* ---------- Back Button ---------- */
+  .back-btn{
+    position: fixed; top: 22px; left: 22px;
+    display:flex; align-items:center; gap:8px;
+    padding:10px 14px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid #eaeaea;
+    color: #1f2937;
+    text-decoration:none;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+    transition: transform .15s ease, box-shadow .15s ease, background .2s ease;
+    z-index: 9;
+  }
+  .back-btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,.10); }
+  .back-btn i{ font-size: 18px; color: var(--brand); }
+
+  /* ---------- Card ---------- */
+  .card {
+  width: 70%;
+  max-width: 1200px;  /* ให้ใหญ่ขึ้น */
+  margin: auto;       /* กึ่งกลาง */
+  background: var(--card);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid #eef0f4;
+  display: flex;
+  flex-direction: column;
+  }
+
+  /* ---------- Hero Image ---------- */
+  .card img{
+    width:100%; height: 460px; object-fit:cover;
+    display:block;
+    background:#eef1f5;
+    border-bottom: 1px solid #eef0f4;
+    filter: saturate(1.03) contrast(1.02);
+  }
+
+  /* ---------- Content ---------- */
+  .card-content{
+    padding: 32px 28px 38px;
+    flex:1; display:flex; flex-direction:column; gap:22px;
+    background-color: white;
+    
+  }
+
+  /* ---------- Section Title + Sub ---------- */
+  .section{ border-left: 6px solid var(--brand); padding-left: 16px; }
+  .section h2{
+    margin:6px 0 4px; font-size: clamp(22px, 3vw, 28px); letter-spacing:.2px;
+  }
+  .section p{ color:#4b5563; line-height:1.75; }
+
+  /* ---------- Pills / Meta ---------- */
+  .pill{
+    display:inline-block; font-size:12px; color:#374151;
+    background:#f3f4f6; padding:4px 10px; border-radius:999px; border:1px solid #eceff3;
+  }
+
+  /* ---------- Two Columns ---------- */
+  .row2{ display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
+
+  /* ---------- Info Box ---------- */
+  .feature-box{
+    background:#ffffff; border:1px solid #ffffff;
+    border-radius: var(--radius-lg); padding:18px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.097);
+  }
+  .feature-box h3{
+    margin:0 0 12px; font-size: 1.05rem; font-weight: 700; color: var(--brand);
+    letter-spacing:.2px;
+  }
+
+  /* ---------- Key-Value Grid ---------- */
+  .kv{ display:grid; grid-template-columns: 160px 1fr; gap:8px; align-items: flex-start; }
+  .kv + .kv{ margin-top:10px; }
+  .kv div:first-child{ color:#6b7280; }
+
+  /* ---------- Date Box ---------- */
+  .date-box{
+    display:flex; flex-direction:column; gap:9px;
+    padding:14px 16px; border-radius: var(--radius-md);
+    background: linear-gradient(180deg, #fff 0%, #fbfbfd 100%);
+    border:1px solid #eef0f4;
+  }
+  .date-box p{ margin:0; color:#374151; font-size:15px; }
+  .date-box i{ color: var(--accent); margin-right:6px; }
+
+  /* ---------- Tags ---------- */
+  .tags{ display:flex; gap:8px; flex-wrap:wrap; }
+  .tag{
+    background: #fff7e6; border: 1px solid #ffd591; color:#a76100;
+    padding:4px 10px; border-radius:999px; font-size:12px;
+    transition: transform .12s ease;
+  }
+  .tag:hover{ transform: translateY(-1px); }
+
+  /* ---------- Buttons ---------- */
+  .button-group{ margin-top:auto; display:flex; justify-content:flex-end; gap:12px; }
+  .btn{
+    display:inline-block; padding:12px 16px; border-radius: 12px;
+    border:1px solid #e6e8ee; text-decoration:none; cursor:pointer;
+    transition: box-shadow .15s ease, transform .12s ease, background .2s ease;
+    background:#fff; color:#111827;
+  }
+  .btn:hover{ box-shadow: 0 8px 22px rgba(0,0,0,.08); transform: translateY(-1px); }
+
+  .register-btn{
+    border: 1px solid transparent;
+    background: linear-gradient(180deg, var(--brand) 0%, var(--brand-600) 100%);
+    color:#fff; font-weight:700; padding:12px 22px; border-radius: 999px; min-width: 170px;
+    box-shadow: 0 8px 22px var(--ring);
+    transition: filter .15s ease, transform .12s ease;
+  }
+  .register-btn:hover{ filter: brightness(1.02); transform: translateY(-1px); }
+  .register-btn.cancel{
+    background:#fff; color: var(--brand); border:1.5px solid var(--brand);
+    box-shadow: 0 6px 18px rgba(211,47,47,.08);
+  }
+  .register-btn.cancel:hover{ background: var(--brand); color:#fff; }
+  .register-btn:disabled { opacity: .65; filter: saturate(.85); cursor: not-allowed; }
+
+  /* ---------- Elevation on Focus (a11y) ---------- */
+  .back-btn:focus, .btn:focus, .register-btn:focus{
+    outline: none; box-shadow: 0 0 0 4px var(--ring);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px){
+    .card img{ height: 360px; }
+    .row2{ grid-template-columns: 1fr; }
+    .kv{ grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px){
+    body{ padding: 24px 14px; }
+    .back-btn{ position: sticky; top: 10px; left: 10px; }
+    .card img{ height: 260px; }
+  }
+
+ 
+  </style>
+
+  <!-- ใช้สไตล์หลักอื่น ๆ -->
+  <link rel="stylesheet" href="{{ url_for('static', path='css/events.css') }}">
+
+  <!-- ===== เพิ่มสไตล์ “Modern Modal – Polished” (override/เสริมของเดิม) ===== -->
+  <style>
+    .modal-backdrop{
+      position: fixed; inset: 0; background: rgba(12,14,20,.48);
+      opacity: 0; pointer-events: none; transition: opacity .2s ease;
+      z-index: 80;
+    }
+    .modal-backdrop.show{ opacity: 1; pointer-events: auto; }
+
+    .modal{
+      position: fixed; inset: 0; display: grid; place-items: center;
+      z-index: 90; pointer-events: none;
+    }
+    .modal.open{ pointer-events: auto; }
+
+    .modal-card{
+      width: min(560px, calc(100vw - 32px));
+      background: var(--card); color: var(--text);
+      border: 1px solid #e9ecf2; border-radius: 16px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.18);
+      transform: translateY(12px) scale(.98);
+      opacity: 0;
+      transition: transform .2s ease, opacity .2s ease;
+      outline: none;
+    }
+    .modal.open .modal-card{
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .modal-header{
+      display:flex; align-items:center; gap:12px;
+      padding: 16px 18px 10px 18px; border-bottom: 1px dashed #eceff5;
+    }
+    .modal-icon{
+      width: 36px; height: 36px; flex: 0 0 36px; display:grid; place-items:center;
+      border-radius: 999px;
+      background: var(--brand-200);
+      color: var(--brand-600); font-weight: 900;
+    }
+    .modal-title{ font-weight:800; letter-spacing:.2px; }
+
+    .modal-body{
+      padding: 14px 18px 6px 18px; line-height: 1.7; color: #374151;
+    }
+    .modal-body p{ margin: 0; }
+
+    .modal-actions{
+      display:flex; gap:10px; justify-content:flex-end;
+      padding: 12px 18px 16px 18px;
+    }
+    .modal-btn{
+      appearance:none; border:1px solid #e7eaf1; background:#fff; color:#111827;
+      padding:10px 14px; border-radius: 10px; cursor:pointer; font-weight:600;
+      transition: transform .12s ease, box-shadow .12s ease, background .2s ease;
+    }
+    .modal-btn:hover{ transform: translateY(-1px); box-shadow: 0 8px 22px rgba(0,0,0,.08); }
+    .modal-btn.primary{
+      background: linear-gradient(180deg, var(--brand) 0%, var(--brand-600) 100%);
+      color:#fff; border: 1px solid transparent; box-shadow: 0 8px 22px var(--ring);
+    }
+
+    /* สถานะ */
+    .modal-card.success .modal-icon{ background: #e6f8ec; color: #137a2c; }
+    .modal-card.error   .modal-icon{ background: #fde2e2; color: #b71c1c; }
+    .modal-card.warn    .modal-icon{ background: #fff5e0; color: #a76100; }
+    .modal-card.info    .modal-icon{ background: #e7f0ff; color: #144aa0; }
+
+    
+  </style>
+</head>
+<body>
+
+  <!-- Top bar: แสดงชื่อผู้ใช้ + Logout -->
+  <div class="topbar">
+    <span class="user" id="user-name"> </span>
+    <a href="#" id="logout-link"><i class='bx bx-log-out'></i> Logout</a>
+  </div>
+
+  <!-- ปุ่มย้อนกลับไปหน้ารวมกิจกรรม -->
+  <a href="/events" class="back-btn"><i class='bx bx-arrow-back'></i> ย้อนกลับ</a>
+
+  <div class="card">
+    <!-- รูปกิจกรรม (ถ้าไม่มีรูป ใช้ placeholder) -->
+    <img
+      class="hero"
+      src="{{ ev.picture_url or 'https://picsum.photos/1024/576?blur=1' }}"
+      alt="{{ ev.title or 'ภาพกิจกรรม' }}"
+      onerror="this.src='https://picsum.photos/1024/576?blur=1';"
+    />
+
+    <div class="card-content">
+      <!-- หัวข้อ + สถานะ -->
+      <div class="section">
+        {% set status_txt = (ev.status | default('') | string) %}
+        {% set status_lc  = status_txt | lower %}
+        <span class="pill">
+          {{ (status_txt if status_txt else 'ไม่ระบุ') }}
+        </span>
+        <h2 style="margin-top:8px;">{{ ev.title or 'ไม่ระบุชื่อกิจกรรม' }}</h2>
+        <div class="meta">
+          {{ (ev.faculty or 'ไม่ระบุคณะ') }} • {{ (ev.major or 'ไม่ระบุหมวดหมู่') }} • {{ (ev.category or 'ไม่ระบุหมวดหมู่') }}
+        </div>
+        {% if ev.detail %}
+          <p style="margin-top:8px;">{{ ev.detail }}</p>
+        {% endif %}
+      </div>
+
+      <!-- ข้อมูลหลัก (สถานที่ / วันที่) -->
+      <div class="row2">
+        <div class="feature-box">
+          <div class="kv" style="margin-top:8px;">
+            <div><strong>วันจัดกิจกรรม</strong></div>
+            {% set ed = ev.event_date | default('') %}
+            <div>{{ ed[:10] if ed else 'ไม่ระบุ' }}</div>
+          </div>
+          <div class="kv" style="margin-top:8px;">
+            <div><strong>ปิดรับสมัคร</strong></div>
+            {% set dd = ev.deadline_date | default('') %}
+            <div>{{ dd[:10] if dd else 'ไม่ระบุ' }}</div>
+          </div>
+          <div class="kv" style="margin-top:8px;">
+            <div><strong>รหัสกิจกรรม</strong></div>
+            <div>{{ ev.event_id }}</div>
+          </div>
+        </div>
+
+        <!-- แท็ก (ถ้ามี) -->
+        <div class="feature-box">
+          <h3>แท็กที่เกี่ยวข้อง</h3>
+          {% if ev.tags and ev.tags|length > 0 %}
+            <div class="tags">
+              {% for t in ev.tags %}
+                <span class="tag">#{{ t }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div style="color:#777;">— ไม่มีแท็ก —</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- ปุ่ม -->
+      <div class="button-group">
+        <button class="register-btn" id="regBtn" data-event-id="{{ ev.event_id }}" data-status="{{ (ev.status or '') | string | lower }}">ลงทะเบียน</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- รากของโมดัล (จะถูกสร้างอัตโนมัติถ้าไม่มี) -->
+
+  <script>
+/** ---------- Helpers ---------- **/
+function $(sel, root=document){ return root.querySelector(sel); }
+async function apiFetch(url, opts={}){
+  const r = await fetch(url, { credentials: "include", ...opts });
+  if (!r.ok) {
+    let msg = "เกิดข้อผิดพลาด";
+    try { const j = await r.json(); msg = j.detail || msg; } catch {}
+    const err = new Error(msg); err.status = r.status; throw err;
+  }
+  if (r.status === 204) return null;
+  try { return await r.json(); } catch { return null; }
+}
+
+/** ---------- Logout ---------- **/
+document.getElementById("logout-link")?.addEventListener("click", async (e) => {
+  e.preventDefault();
+  try { await fetch("/api/auth/logout", { method:"POST", credentials:"include" }); } catch {}
+  window.location.href = "/auth";
+});
+
+/** ---------- แสดงชื่อผู้ใช้ ---------- **/
+(async () => {
+  try {
+    const me = await apiFetch("/api/auth/me");
+    $("#user-name")?.replaceChildren(document.createTextNode(`👤 ${me.display_name}`));
+  } catch {}
+})();
+
+/** ---------- Modal: โค้ดใหม่ (สวย + เข้าถึงได้ดีขึ้น) ---------- **/
+const MODAL_ICONS = { success: "✔", error:"✖", info:"ℹ", warn:"⚠" };
+let _lastFocusedEl = null;
+
+function ensureModalRoots(){
+  let backdrop = document.querySelector(".modal-backdrop");
+  let host = document.querySelector(".modal");
+  if(!backdrop){
+    backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    document.body.appendChild(backdrop);
+  }
+  if(!host){
+    host = document.createElement("div");
+    host.className = "modal";
+    document.body.appendChild(host);
+  }
+  return { backdrop, host };
+}
+
+function showModal({ type="info", title="แจ้งเตือน", message="", actions=[] }){
+  const { backdrop, host } = ensureModalRoots();
+
+  // เก็บ element ที่มีโฟกัสไว้ คืนโฟกัสตอนปิด
+  _lastFocusedEl = document.activeElement;
+
+  // สร้างเนื้อหาโมดัล + aria
+  host.innerHTML = `
+    <div class="modal-card ${type}"
+         role="dialog" aria-modal="true"
+         aria-labelledby="modal-title" aria-describedby="modal-desc" tabindex="-1">
+      <div class="modal-header">
+        <div class="modal-icon">${MODAL_ICONS[type] || "ℹ"}</div>
+        <div class="modal-title" id="modal-title">${title}</div>
+      </div>
+      <div class="modal-body" id="modal-desc">${message}</div>
+      <div class="modal-actions"></div>
+    </div>`;
+
+  const card = host.querySelector(".modal-card");
+  const actionsEl = host.querySelector(".modal-actions");
+
+  // ปุ่มเริ่มต้น
+  if (!actions.length){
+    actions = [{ label: "ปิด", role: "primary", onClick: closeModal }];
+  }
+  actions.forEach(a=>{
+    const btn = document.createElement("button");
+    btn.className = "modal-btn " + (a.role === "primary" ? "primary" : "");
+    btn.textContent = a.label;
+    btn.addEventListener("click", ()=>{ (a.onClick || closeModal)(); });
+    actionsEl.appendChild(btn);
+  });
+
+  // แสดง + ล็อกสกอร์ลพื้นหลัง
+  document.body.classList.add("no-scroll");
+  backdrop.classList.add("show");
+  host.classList.add("open");
+
+  // โฟกัสที่การ์ด (เริ่ม focus trap)
+  requestAnimationFrame(()=> card.focus());
+
+  // ปิดด้วย ESC / คลิกฉากหลัง
+  function onEsc(e){ if(e.key === "Escape") closeModal(); }
+  function onBackdrop(e){ if(e.target === backdrop) closeModal(); }
+  document.addEventListener("keydown", onEsc);
+  backdrop.addEventListener("click", onBackdrop);
+
+  // Focus trap
+  function trapFocus(e){
+    if (!host.classList.contains("open")) return;
+    const focusables = host.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last  = focusables[focusables.length - 1];
+    if (e.key === "Tab"){
+      if (e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
+      else if (!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+    }
+  }
+  document.addEventListener("keydown", trapFocus);
+
+  // ทำให้ปิดได้ทั่วถึง
+  window._closeModal = closeModal;
+
+  function closeModal(){
+    backdrop.classList.remove("show");
+    host.classList.remove("open");
+    host.innerHTML = "";
+    document.body.classList.remove("no-scroll");
+
+    document.removeEventListener("keydown", onEsc);
+    backdrop.removeEventListener("click", onBackdrop);
+    document.removeEventListener("keydown", trapFocus);
+
+    // คืนโฟกัสให้ปุ่มที่กดเปิด (ถ้ามี)
+    if (_lastFocusedEl && typeof _lastFocusedEl.focus === "function") {
+      _lastFocusedEl.focus();
+    }
+  }
+}
+
+function showApiError(message){
+  showModal({
+    type: "error",
+    title: "ไม่สามารถดำเนินการได้",
+    message: message || "เกิดข้อผิดพลาด",
+    actions: [{ label: "เข้าใจแล้ว", role: "primary" }]
+  });
+}
+function showApiSuccess(message){
+  showModal({
+    type: "success",
+    title: "สำเร็จ",
+    message: message || "ทำรายการเรียบร้อย",
+    actions: [{ label: "ปิด", role: "primary" }]
+  });
+}
+
+/** ---------- Preload สถานะ + Bind ปุ่ม ---------- **/
+(async () => {
+  const regBtn = document.getElementById("regBtn");
+  if (!regBtn) return;
+  const eid = regBtn.dataset.eventId;
+
+  // preload สถานะ
+  try {
+    const st = await apiFetch(`/api/events/${eid}/register/status`);
+    if (st?.registered) {
+      regBtn.classList.add("cancel");
+      regBtn.textContent = "ยกเลิกการลงทะเบียน";
+    }
+  } catch (e) {
+    // 401 = not logged in → เด้งตอนกดปุ่มแทน
+    if (e.status && e.status !== 401) showApiError(e.message || "โหลดสถานะไม่สำเร็จ");
+  }
+
+  // คลิกสมัคร/ยกเลิก
+  regBtn.addEventListener("click", async (ev) => {
+    regBtn.disabled = true; const old = regBtn.textContent;
+    regBtn.textContent = regBtn.classList.contains("cancel") ? "กำลังยกเลิก..." : "กำลังลงทะเบียน...";
+    try {
+      if (regBtn.classList.contains("cancel")) {
+        await apiFetch(`/api/events/${eid}/register`, { method: "DELETE" });
+        regBtn.classList.remove("cancel");
+        regBtn.textContent = "ลงทะเบียน";
+        showApiSuccess("ยกเลิกการลงทะเบียนแล้ว");
+      } else {
+        await apiFetch(`/api/events/${eid}/register`, { method: "POST" });
+        regBtn.classList.add("cancel");
+        regBtn.textContent = "ยกเลิกการลงทะเบียน";
+        showApiSuccess("ลงทะเบียนสำเร็จ");
+      }
+    } catch (e) {
+      if (e.status === 401) {
+        // จำ element ที่กดไว้ แล้วเด้งไปหน้า auth
+        window.location.href = "/auth";
+      } else {
+        regBtn.textContent = old;
+        showApiError(e.message || "เกิดข้อผิดพลาด");
+      }
+    } finally {
+      regBtn.disabled = false;
+    }
+  });
+})();
+
+  (function(){
+    const btn = document.getElementById("regBtn");
+    if (!btn) return;
+    const st = (btn.getAttribute("data-status") || "").toLowerCase();
+    const labelByStatus = {
+      "upcoming": "ยังไม่เปิดลงทะเบียน",
+      "close": "ปิดรับสมัครแล้ว",
+      "full": "เต็มแล้ว",
+    };
+    if (st && st !== "open"){
+      btn.disabled = true;
+      btn.title = labelByStatus[st] || "ไม่พร้อมลงทะเบียน";
+      if (labelByStatus[st]) btn.textContent = labelByStatus[st];
+    }
+  })();
+  </script>
+</body>
+</html>

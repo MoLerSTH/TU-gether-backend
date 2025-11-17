@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{ ev.title }} - รายละเอียดกิจกรรม</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin:0; background:#f6f7fb; color:#222;}
+    .wrap { max-width: 860px; margin: 0 auto; padding: 16px;}
+    .card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 6px 18px rgba(0,0,0,.06);}
+    .hero { width:100%; aspect-ratio: 16/9; object-fit:cover; border-radius:12px; background:#eee;}
+    .meta { color:#666; font-size: 14px;}
+    .btn { display:inline-block; padding:10px 14px; border-radius: 8px; border:1px solid #ddd; text-decoration:none; color:#111; background:#fafafa; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="btn" href="{{ url_for('events_page') }}">← กลับ</a>
+    <div class="card" style="margin-top:12px;">
+      <img class="hero" src="{{ ev.picture_url or 'https://picsum.photos/1024/576?blur=1' }}" alt="{{ ev.title }}"/>
+      <div style="margin-top:12px;">
+        <div style="font-size:12px; background:#f3f4f6; display:inline-block; padding:4px 10px; border-radius:999px;">{{ ev.status }}</div>
+        <h2 style="margin:8px 0 6px;">{{ ev.title }}</h2>
+        <div class="meta">{{ ev.faculty }} • {{ ev.category }}</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+          <div><strong>สถานที่:</strong> {{ ev.location }}</div>
+          <div><strong>วันจัดกิจกรรม:</strong> {{ ev.event_date }}</div>
+          <div><strong>ปิดรับสมัคร:</strong> {{ ev.deadline_date }}</div>
+          <div><strong>รหัสกิจกรรม:</strong> {{ ev.event_id }}</div>
+        </div>
+        <h3 style="margin-top:16px;">รายละเอียด</h3>
+        <p>{{ ev.detail }}</p>
+
+        <!-- #comment: FE จริงเชื่อม endpoint สมัคร/ยกเลิก พร้อม auth token -->
+        <div style="margin-top:16px; display:flex; gap:8px;">
+          <a class="btn" href="#">สมัครเข้าร่วม</a>
+          <a class="btn" href="#">ยกเลิกการสมัคร</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,24 @@
+
+---
+
+## ⚡ API Endpoints (ตัวอย่าง)
+
+### Auth
+- `POST /api/auth/login` → เข้าสู่ระบบ
+
+### Events
+- `GET /api/events` → ดึงรายการกิจกรรมทั้งหมด (filter ได้)
+- `GET /api/events/{event_id}` → ดูรายละเอียดกิจกรรม
+- `POST /api/admin/events` → สร้างกิจกรรมใหม่ (admin เท่านั้น)
+- `PUT /api/admin/events/{event_id}` → แก้ไขกิจกรรม
+- `DELETE /api/admin/events/{event_id}` → ลบกิจกรรม
+- `GET /api/admin/events/{event_id}/registrations` → รายชื่อผู้ลงทะเบียน
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone Project
+```bash
+git clone https://github.com/<your-repo>/tu-gether.git
+cd tu-gether

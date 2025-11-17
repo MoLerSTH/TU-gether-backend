@@ -1,0 +1,539 @@
+<!-- app/templates/auth.html (Red & White Modern Theme + Single-Sheet Overlay Animation) -->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>เข้าสู่ระบบ / สมัครสมาชิก</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Red & White • Modern / Glass + Animated Overlay ===== */
+    :root{
+      --primary-color:#d62828;
+      --primary-600:#b71c1c;
+
+      --text-dark:#14161a;
+      --text-muted:#6b7280;
+
+      --card-bg: rgba(255,255,255,.86);
+      --border-color: rgba(0,0,0,.08);
+      --input-bg:#fff;
+
+      --success-bg:#e8f7ee;
+      --success-text:#1b8f4d;
+      --error-bg:#fde7ea;
+      --error-text:#b91c1c;
+
+      --radius:18px;
+      --radius-sm:12px;
+      --shadow-sm:0 6px 18px rgba(0,0,0,.06);
+      --shadow-lg:0 28px 60px rgba(0,0,0,.12);
+      --ring:0 0 0 5px rgba(214,40,40,.16);
+      --ease:cubic-bezier(.2,.6,.2,1);
+      --speed:.25s;
+
+      --background-gradient:
+        radial-gradient(1200px 600px at -10% -10%, #fff3f3 0%, transparent 45%),
+        radial-gradient(1200px 600px at 110% 15%, #fff0f0 0%, transparent 45%),
+        linear-gradient(180deg,#ffffff 0%, #fafafa 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body{
+      font-family: "IBM Plex Sans Thai","Poppins","Segoe UI",Tahoma,Verdana,sans-serif;
+      -webkit-font-smoothing: antialiased;   
+      text-rendering: optimizeLegibility; 
+      min-height:100vh; color:var(--text-dark);
+      background:var(--background-gradient);
+      display:flex; align-items:center; justify-content:center;
+      padding:28px; position:relative;
+    }
+
+    /* ===== Background image ===== */
+    .background-img{
+      position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      opacity: .6; z-index: 0; pointer-events: none;
+      filter: saturate(1.05) contrast(1.05) brightness(.98);
+    }
+    body::after{
+      content:""; position:fixed; inset:0; z-index:0; backdrop-filter: blur(7px);
+    }
+
+    /* ===== Animated Card Container (2 panels + overlay) ===== */
+    .card{
+      position: relative; z-index: 1;
+      width: min(980px, 92vw);
+      min-height: 680px;           /* <- เดิมเป็น height:680px */
+      height: auto;                /* ให้ขยายตามเนื้อหา */
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: transform var(--speed), box-shadow var(--speed), filter var(--speed);
+      display:grid; grid-template-columns: 1fr 1fr; /* login | signup */
+      isolation:isolate;
+    }
+    .card:hover{ transform: translateY(-2px); filter: saturate(1.01); }
+    .card::before{
+      content:""; position:absolute; inset:0; padding:1px; border-radius:calc(var(--radius) + 1px);
+      background: linear-gradient(135deg, rgba(214,40,40,.55), rgba(183,28,28,.25), rgba(255,255,255,.25));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events:none;
+    }
+
+    /* ===== Form panel base ===== */
+    .pane{
+      position: relative; z-index:2;
+      padding: clamp(24px, 4vw, 40px);
+      display: grid;
+      align-content: flex-start;  /* จัดเนื้อหาชิดบน */
+      gap: 16px;                  /* ลดช่องว่างลงนิดหน่อย */
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(8px);
+      transition: opacity .45s var(--ease), transform .45s var(--ease);
+    }
+
+    .pane-login{
+      transform: translateY(-10px);
+    }
+
+    .title {
+      font-weight: 900; font-size: 22px; text-align: center; margin-bottom: 4px;
+      letter-spacing:.2px;
+      background: linear-gradient(180deg,#222 0%, #4a4a4a 100%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+    }
+
+    /* ===== Inputs ===== */
+    .form-group { margin-bottom: 8px; }
+    .label { display: block; margin-bottom: 6px; font-size: 14px; color: #1b1d21; font-weight: 700; }
+
+    .input, .select {
+      width: 100%; padding: 12px 14px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color); background: var(--input-bg);
+      font-size: 15px; color:#1f2329;
+      transition: border-color var(--speed), box-shadow var(--speed), background var(--speed), transform var(--speed);
+      box-shadow: 0 1px 0 rgba(0,0,0,.02) inset;
+    }
+    .input::placeholder{ color:#a1a8b2; }
+    .input:focus, .select:focus {
+      outline: none; border-color: var(--primary-color);
+      box-shadow: var(--ring);
+      background: #fff; transform: translateY(-1px);
+    }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ===== Buttons ===== */
+    .btn {
+      width: 100%; padding: 12px 16px; border: none; border-radius: 14px;
+      background: linear-gradient(180deg, var(--primary-color) 0%, var(--primary-600) 100%);
+      color: #fff; font-weight: 900; font-size: 16px; cursor: pointer;
+      transition: transform var(--speed), box-shadow var(--speed), filter var(--speed);
+      margin-top: 6px; 
+      margin-bottom: 14px;
+      box-shadow: 0 10px 15px rgba(214, 40, 40, .30);
+    }
+    #regBtn{ margin-bottom: 22px; }
+
+    .btn:hover { transform: translateY(-1.5px); filter: brightness(1.03); }
+    .btn:active { transform: translateY(0); }
+    .btn:disabled { opacity: .7; cursor: not-allowed; box-shadow: none; transform: none; }
+
+    .btn-outline{
+      border: 2px solid #fff; background: transparent; color: #fff;
+      border-radius: 999px; padding: 10px 18px; font-weight: 800; cursor: pointer;
+      transition: background .2s var(--ease), color .2s var(--ease), border-color .2s var(--ease);
+    }
+    .btn-outline:hover{ background:#fff; color: var(--primary-600); border-color:#fff; }
+      
+    /* ===== Messages (อยู่ใน flow ปกติ, card ยืดตามเลย) ===== */
+    .msg {
+      margin-top: 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 800;
+      border-left: 5px solid;
+      display:none;        /* JS จะเปลี่ยนเป็น block */
+    }
+    .success { background: var(--success-bg); color: var(--success-text); border-color: var(--success-text); }
+    .error { background: var(--error-bg); color: var(--error-text); border-color: var(--error-text); }
+
+    /* ===== Helpers ===== */
+    .required { color: var(--primary-color); font-weight: 700; margin-left: 2px; }
+    .radio-row { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
+    .radio-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; color: #1f2329; font-weight: 600; }
+    .radio-row input[type="radio"]{ accent-color: var(--primary-color); }
+    .hint { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+    #pwHelp { min-height: 18px; margin-top: -2px; margin-bottom: 4px; }
+
+    /* ===== Overlay ===== */
+    .overlay{
+      position: absolute; inset: 0; z-index:3; pointer-events:none;
+      border-radius: inherit; overflow:hidden;
+    }
+    .overlay-sheet{
+      position:absolute; top:0; left:50%;
+      width:50%; height:100%;
+      background: linear-gradient(135deg, var(--primary-600) 0%, #8f1a1a 100%);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.14), 0 10px 30px rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+      transition: transform .65s var(--ease);
+      transform: translateX(0);
+      will-change: transform;
+    }
+    .overlay-panel{
+      position:absolute; top:0; width:50%; height:100%;
+      display:grid; place-content:center; gap:14px;
+      color:#fff; text-align:center;
+      padding: clamp(24px, 4vw, 48px);
+      pointer-events:auto;
+    }
+    .overlay-left{ left:0; }
+    .overlay-right{ right:0; }
+    .ov-title{ font-weight:900; font-size:clamp(18px,2.2vw,26px); margin-bottom:4px; }
+    .ov-desc{ opacity:.95; }
+
+    /* States */
+    .card:not(.signup) .pane-login{ opacity:1; transform: translateY(-10px); }
+    .card:not(.signup) .pane-register{ opacity:0; transform: translateX(20px); pointer-events:none; }
+    .card:not(.signup) .overlay-left  { opacity:0; pointer-events:none; transition:opacity .35s var(--ease); }
+    .card:not(.signup) .overlay-right { opacity:1; pointer-events:auto;  transition:opacity .35s var(--ease); }
+    .card:not(.signup) .overlay-sheet { transform: translateX(0); }
+
+    .card.signup .pane-login{ opacity:0; transform: translateX(-20px); pointer-events:none; }
+    .card.signup .pane-register{ opacity:1; transform:none; }
+    .card.signup .overlay-left  { opacity:1; pointer-events:auto;  transition:opacity .35s var(--ease); }
+    .card.signup .overlay-right { opacity:0; pointer-events:none; transition:opacity .35s var(--ease); }
+    .card.signup .overlay-sheet { transform: translateX(-100%); }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 860px){
+      .card{ min-height: 720px; height:auto; grid-template-columns: 1fr; }
+      .overlay{ display:none; }
+      .pane{ padding-block: 24px; }
+      .row { grid-template-columns: 1fr; }
+      .pane-login{ transform:none; }
+      .card:not(.signup) .pane-login{ transform:none; }
+    }
+  </style>
+</head>
+<body>
+  <img class="background-img" src="https://www.holcimelevate.com/content/dam/elevateemea/assets/references/elevate-roofing-ultraply-tpo-thammasat-university-thailand-2019-01-lr.jpg" alt="" />
+
+  <div class="card" id="authCard">
+    <!-- ===== Login Panel ===== -->
+    <section class="pane pane-login" id="pane-login" aria-labelledby="tab-login">
+      <h2 class="title">เข้าสู่ระบบ</h2>
+
+      <form id="loginForm" method="POST" action="/api/login" enctype="multipart/form-data" novalidate>
+        <div class="form-group">
+          <span class="label">ประเภทผู้ใช้ <span class="required">*</span></span>
+          <div class="radio-row">
+            <label><input type="radio" name="user_type" id="user_type_student" value="student" checked> นักศึกษา</label>
+            <label><input type="radio" name="user_type" id="user_type_user" value="user"> ผู้ใช้ทั่วไป</label>
+          </div>
+        </div>
+
+        <div id="studentFields">
+          <div class="form-group">
+            <label class="label" for="student_id">รหัสนักศึกษา <span class="required">*</span></label>
+            <input class="input" type="text" id="student_id" name="student_id" required inputmode="numeric"
+                   pattern="^\d{8,12}$" maxlength="12" placeholder="เช่น 67107XXXXX" />
+            <div class="hint">ตัวเลข 8–12 หลัก</div>
+          </div>
+          <div class="form-group">
+            <label class="label" for="citizen_id">เลขบัตรประชาชน (13 หลัก) <span class="required">*</span></label>
+            <input class="input" type="password" id="citizen_id" name="citizen_id" required inputmode="numeric"
+                   pattern="^\d{13}$" maxlength="13" placeholder="กรอกเลข 13 หลัก" />
+          </div>
+        </div>
+
+        <div id="userFields" style="display:none">
+          <div class="form-group">
+            <label class="label" for="identifier">อีเมล (@gmail.com) หรือ ชื่อผู้ใช้ <span class="required">*</span></label>
+            <input class="input" type="text" id="identifier" name="identifier" placeholder="username หรือ example@gmail.com" />
+          </div>
+          <div class="form-group">
+            <label class="label" for="login_password">รหัสผ่าน <span class="required">*</span></label>
+            <input class="input" type="password" id="login_password" name="password" minlength="8" maxlength="12"
+                   pattern="\S{8,12}" placeholder="รหัสผ่านที่สมัคร (8–12 ตัว, ไม่เว้นวรรค)" />
+          </div>
+        </div>
+
+        <button class="btn" type="submit" id="loginBtn">เข้าสู่ระบบ</button>
+      </form>
+      <div id="loginMsg" class="msg" style="display:none"></div>
+    </section>
+
+    <!-- ===== Register Panel ===== -->
+    <section class="pane pane-register" id="pane-register" aria-labelledby="tab-register">
+      <h2 class="title">สร้างบัญชีใหม่</h2>
+
+      <form id="registrationForm" method="POST" action="/api/register" enctype="multipart/form-data" novalidate>
+        <div class="form-group">
+          <label class="label" for="username">ชื่อผู้ใช้ <span class="required">*</span></label>
+          <input class="input" type="text" id="username" name="username" required minlength="3" maxlength="50" autocomplete="username" placeholder="ตั้งชื่อที่ต้องการ (3-50 ตัวอักษร)" />
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label class="label" for="password">รหัสผ่าน (8–12) <span class="required">*</span></label>
+            <input class="input" type="password" id="password" name="password" required minlength="8" maxlength="12"
+                   pattern="\S{8,12}" autocomplete="new-password" placeholder="ไม่เว้นวรรค" />
+          </div>
+          <div class="form-group">
+            <label class="label" for="confirm_password">ยืนยันรหัสผ่าน <span class="required">*</span></label>
+            <input class="input" type="password" id="confirm_password" name="confirm_password" required minlength="8" maxlength="12"
+                   pattern="\S{8,12}" autocomplete="new-password" placeholder="กรอกซ้ำให้ตรงกัน" />
+          </div>
+        </div>
+        <div id="pwHelp" class="hint"></div>
+
+        <div class="form-group">
+          <label class="label" for="email">อีเมล (@gmail.com) <span class="required">*</span></label>
+          <input class="input" type="email" id="email" name="email" required
+                 pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$" placeholder="example@gmail.com" autocomplete="email" />
+        </div>
+
+        <div class="row">
+          <div class="form-group">
+            <label class="label" for="grade">ชั้นปี/เกรด <span class="required">*</span></label>
+            <select class="select" id="grade" name="grade" required>
+              <option value="" disabled selected>-- เลือกชั้นปี --</option>
+              <option value="1">ปี 1</option>
+              <option value="2">ปี 2</option>
+              <option value="3">ปี 3</option>
+              <option value="4">ปี 4</option>
+              <option value="5">ปี 5</option>
+              <option value="6">ปี 6</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="label" for="phone_num">เบอร์โทร (10 หลัก) <span class="required">*</span></label>
+            <input class="input" type="tel" id="phone_num" name="phone_num" required inputmode="numeric"
+                   pattern="^\d{10}$" maxlength="10" placeholder="เช่น 0812345678" />
+          </div>
+        </div>
+
+        <input type="hidden" id="role" name="role" value="other" />
+
+        <div class="row">
+          <div class="form-group">
+            <label class="label" for="firstname">ชื่อจริง <span class="required">*</span></label>
+            <input class="input" type="text" id="firstname" name="firstname" required maxlength="100" autocomplete="given-name" placeholder="ชื่อจริง"/>
+          </div>
+          <div class="form-group">
+            <label class="label" for="lastname">นามสกุล <span class="required">*</span></label>
+            <input class="input" type="text" id="lastname" name="lastname" required maxlength="100" autocomplete="family-name" placeholder="นามสกุล"/>
+          </div>
+        </div>
+
+        <button class="btn" type="submit" id="regBtn">สมัครสมาชิก</button>
+      </form>
+      <div id="regMsg" class="msg" style="display:none"></div>
+    </section>
+
+    <!-- ===== Overlay (single-sheet + buttons) ===== -->
+    <div class="overlay" aria-hidden="true">
+      <div class="overlay-sheet"></div>
+
+      <div class="overlay-panel overlay-left">
+        <h3 class="ov-title">TU-Gether</h3>
+        <p class="ov-desc">สมัครสมาชิกแล้ว เข้าสู่ระบบ</p>
+        <button class="btn-outline" type="button" data-action="to-login">เข้าสู่ระบบ</button>
+      </div>
+
+      <div class="overlay-panel overlay-right">
+        <h3 class="ov-title">Welcome To TU-Gether</h3>
+        <p class="ov-desc">ยังไม่มีบัญชี ?</p>
+        <button class="btn-outline" type="button" data-action="to-register">สมัครสมาชิก</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const $  = (sel, root=document)=>root.querySelector(sel);
+  const $$ = (sel, root=document)=>Array.from(root.querySelectorAll(sel));
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const card = $('#authCard');
+
+    function setMode(mode){
+      if (!card) return;
+      const isLogin = mode === 'login';
+      card.classList.toggle('signup', !isLogin);
+      history.replaceState(null,'', isLogin ? '#login' : '#register');
+    }
+
+    // ปุ่มสลับ login / register
+    $$('[data-action="to-login"]').forEach(b =>
+      b.addEventListener('click', () => setMode('login'))
+    );
+    $$('[data-action="to-register"]').forEach(b =>
+      b.addEventListener('click', () => setMode('register'))
+    );
+
+    // เปิดตาม URL
+    (function initByURL(){
+      const params = new URLSearchParams(location.search);
+      const want = params.get('tab') || location.hash.replace('#','');
+      if (want === 'register') setMode('register'); else setMode('login');
+    })();
+
+    // ====== สลับ student / user ตอนล็อกอิน ======
+    const radioStudent   = $('#user_type_student');
+    const radioUser      = $('#user_type_user');
+    const studentFields  = $('#studentFields');
+    const userFields     = $('#userFields');
+
+    function switchModeLogin(){
+      if (!studentFields || !userFields) return;
+      const isStudent = radioStudent?.checked;
+      studentFields.style.display = isStudent ? '' : 'none';
+      userFields.style.display    = isStudent ? 'none' : '';
+      $('#student_id').required     = !!isStudent;
+      $('#citizen_id').required     = !!isStudent;
+      $('#identifier').required     = !isStudent;
+      $('#login_password').required = !isStudent;
+    }
+
+    radioStudent?.addEventListener('change', switchModeLogin);
+    radioUser?.addEventListener('change', switchModeLogin);
+    switchModeLogin();
+
+    // ====== เช็ครหัสผ่านตรงกันตอนสมัคร ======
+    const pw     = $('#password');
+    const pw2    = $('#confirm_password');
+    const pwHelp = $('#pwHelp');
+
+    function checkPwMatch(){
+      if (!pw || !pw2 || !pwHelp) return;
+      if (pw.value && pw2.value && pw.value !== pw2.value){
+        pw2.setCustomValidity('mismatch');
+        pwHelp.textContent = 'รหัสผ่านไม่ตรงกัน';
+        pwHelp.style.color = 'var(--error-text)';
+      } else {
+        pw2.setCustomValidity('');
+        pwHelp.textContent = '';
+        pwHelp.style.color = 'var(--text-muted)';
+      }
+    }
+    pw?.addEventListener('input', checkPwMatch);
+    pw2?.addEventListener('input', checkPwMatch);
+
+    async function parseResponse(res){
+      const text = await res.text();
+      try { return JSON.parse(text); } catch { return { detail: text }; }
+    }
+
+    // ====== Login ======
+    const loginForm = $('#loginForm');
+    const loginMsg  = $('#loginMsg');
+    const loginBtn  = $('#loginBtn'); 
+
+    loginForm?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if (!loginMsg || !loginBtn) return;
+
+      loginMsg.style.display = 'none';
+      loginMsg.className     = 'msg';
+
+      loginBtn.disabled      = true;
+
+      try{
+        const fd  = new FormData(loginForm);
+        const res = await fetch('/api/login', { method:'POST', body: fd });
+        const data = await parseResponse(res);
+
+        if (res.ok){
+          loginMsg.textContent = data.message || 'เข้าสู่ระบบสำเร็จ';
+          loginMsg.classList.add('success');
+          loginMsg.style.display = 'block';
+          setTimeout(()=>{ window.location.href = "/main"; }, 900);
+        }else{
+          let msg = data.detail || 'เข้าสู่ระบบไม่สำเร็จ';
+          if (Array.isArray(data.detail) && data.detail.length){
+            msg = data.detail[0].msg || msg;
+          }
+          loginMsg.textContent = msg;
+          loginMsg.classList.add('error');
+          loginMsg.style.display = 'block';
+        }
+      }catch(err){
+        loginMsg.textContent = err.message || 'เกิดข้อผิดพลาด';
+        loginMsg.classList.add('error');
+        loginMsg.style.display = 'block';
+      }finally{
+        loginBtn.disabled = false;
+      }
+    });
+
+    // ====== Register ======
+    const regForm = $('#registrationForm');
+    const regMsg  = $('#regMsg');
+    const regBtn  = $('#regBtn');
+
+    regForm?.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      if (!regMsg || !regBtn) return;
+
+      regMsg.style.display = 'none';
+      regMsg.className     = 'msg';
+      regBtn.disabled      = true;
+
+      try{
+        const fd = new FormData(regForm);
+
+        // map field ให้ตรง backend เดิม (first_name / last_name / phone / user_role)
+        const firstname = fd.get('firstname') || '';
+        const lastname  = fd.get('lastname') || '';
+        const phoneNum  = fd.get('phone_num') || '';
+        const role      = fd.get('role') || 'other';
+        const grade     = fd.get('grade') || '';
+
+        fd.append('first_name', firstname);
+        fd.append('last_name', lastname);
+        fd.append('phone', phoneNum);
+        fd.append('user_role', role);
+        if (grade !== '') {
+          fd.set('grade', String(grade));
+        }
+
+        const res  = await fetch('/api/register', { method:'POST', body: fd });
+        const data = await parseResponse(res);
+
+        if (res.ok){
+          const base = data.message ?? 'สมัครสมาชิกสำเร็จ';
+          const u    = data.username ? ` (ผู้ใช้: ${data.username})` : '';
+          regMsg.textContent = base + u;
+          regMsg.classList.add('success');
+          regMsg.style.display = 'block';
+          regForm.reset();
+        }else{
+          let msg = data.detail || 'สมัครสมาชิกไม่สำเร็จ';
+          if (Array.isArray(data.detail) && data.detail.length){
+            msg = data.detail[0].msg || msg;
+          }
+          regMsg.textContent = msg;
+          regMsg.classList.add('error');
+          regMsg.style.display = 'block';
+        }
+      }catch(err){
+        regMsg.textContent = err.message || 'เกิดข้อผิดพลาด';
+        regMsg.classList.add('error');
+        regMsg.style.display = 'block';
+      }finally{
+        regBtn.disabled = false;
+      }
+    });
+
+  });
+  </script>
+</body>
+</html>

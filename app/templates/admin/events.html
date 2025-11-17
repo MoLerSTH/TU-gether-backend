@@ -1,0 +1,173 @@
+<!--app/templates/admin/events.html-->
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>จัดการกิจกรรม (Admin)</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <style id="modal-enforcer">
+    [hidden]{display:none!important}
+    .overlay,.modal{display:none!important}
+    .overlay.open{display:block!important}
+    .modal.open{display:grid!important}
+    .modal{position:fixed;inset:0;place-items:center;z-index:9999}
+    .overlay{position:fixed;inset:0;z-index:9998}
+    .btn.sm{padding:6px 10px;font-size:12px;border-radius:8px;line-height:1}
+    .btn.sm + .btn.sm{margin-left:6px}
+  </style>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/admin.css') }}">
+
+  <script defer src="{{ url_for('static', path='js/faculty_majorData.js') }}?v=dev1"></script>
+  <script defer src="{{ url_for('static', path='js/admin_event.js') }}?v=dev1"></script>
+
+
+</head>
+<body class="admin-body">
+  <header class="admin-header">
+    <h1 class="admin-title"><i class='bx bx-calendar-event'></i> Events</h1>
+    <nav>
+      <a class="btn" href="/admin"><i class='bx bx-cog' ></i> Dashboard</a>
+      <a class="btn" href="/main"><i class='bx bx-home'></i> Home</a>
+      <!--<a class="btn outline" id="logout-link"><i class='bx bx-log-out'></i> Logout</a>-->
+    </nav>
+  </header>
+
+  <main class="admin-main">
+    <section class="card">
+      <div class="toolbar">
+        <div class="left">
+          <button id="add-btn" class="btn primary"><i class='bx bx-plus'></i> เพิ่มกิจกรรม</button>
+        </div>
+        <div class="right">
+          <input id="filter-text" class="input" placeholder="ค้นหาชื่อ / หมวดหมู่ / คณะ" />
+          <button id="reload-btn" class="btn"><i class='bx bx-refresh'></i> โหลดใหม่</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table" id="events-table">
+          <thead>
+            <tr>
+              <th>รหัส</th>
+              <th>ชื่อกิจกรรม</th>
+              <th>คณะ</th>
+              <th>หมวดหมู่</th>
+              <th>วันที่จัด</th>
+              <th>สถานะ</th>
+              <th>จัดการ</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="overlay" class="overlay" hidden style="display:none!important"></div>
+  <div id="modal" class="modal" hidden style="display:none!important">
+    <div class="modal-card">
+      <h3 id="modal-title">เพิ่มกิจกรรม</h3>
+      <form id="event-form">
+        <div class="grid">
+          <label>ชื่อกิจกรรม <input required id="event-title" /></label>
+          <label>คณะ
+            <select required id="event-faculty">
+              <option value="">-- เลือกคณะ --</option>
+            </select>
+          </label>
+
+          <label>สาขาวิชา
+            <select required id="event-major">
+              <option value="">-- เลือกสาขา --</option>
+            </select>
+          </label>
+          <label>กลุ่มผู้เข้าร่วม
+            <select id="audience-type">
+              <option value="student">นักศึกษา</option>
+              <option value="public">บุคคลทั่วไป</option>
+              <option value="all">ทั้งหมด</option>
+            </select>
+          </label>
+
+          <label>ชั้นปี
+            <select id="student-year">
+              <option value="all">ทั้งหมด</option>
+              <option value="1">ปี 1</option>
+              <option value="2">ปี 2</option>
+              <option value="3">ปี 3</option>
+              <option value="4">ปี 4</option>
+              <option value="4">ปี 5</option>
+              <option value="4">ปี 6</option>
+            </select>
+          </label>
+          <label>หมวดหมู่ <input required id="event-category" /></label>
+          <label>วันจัดกิจกรรม <input type="datetime-local" required id="event-date" /></label>
+          <label>ปิดรับสมัคร <input type="datetime-local" required id="deadline-date" /></label>
+          <label>เปิดลงทะเบียน<input type="datetime-local" id="register-open-at" /></label>
+          <label>สถานะ (แสดงอัตโนมัติ)
+            <input required id="event-status" disabled title="-">
+          </label>
+
+          <!-- Upload Image -->
+          <fieldset style="border:1px dashed #bbb;padding:12px;border-radius:10px">
+            <legend>รูปภาพกิจกรรม</legend>
+            <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+              <div>
+                <input type="file" id="event-picture-file" accept="image/*" />
+                <div id="event-picture-progress"
+                  style="height:6px;background:#eee;border-radius:99px;margin-top:8px;width:280px;overflow:hidden"
+                  hidden>
+                  <div id="event-picture-bar" style="height:100%;width:0%;background:#3b82f6"></div>
+                </div>
+                <p id="event-picture-hint" style="font-size:12px;color:#666;margin-top:6px">
+                  รองรับ .jpg .png .webp ขนาดแนะนำ &lt; 2MB
+                </p>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button type="button" class="btn sm" id="btn-reupload" hidden><i class='bx bx-refresh'></i>
+                    เปลี่ยนไฟล์</button>
+                  <button type="button" class="btn sm outline" id="btn-clearimg" hidden><i class='bx bx-x-circle'></i>
+                    ล้างรูป</button>
+                </div>
+              </div>
+              <figure style="margin:0">
+                <img id="event-picture-preview" alt="Preview"
+                  style="width:200px;height:140px;object-fit:cover;border:1px solid #ddd;border-radius:10px;display:none">
+                <figcaption id="event-picture-name" style="font-size:12px;color:#444;margin-top:6px"></figcaption>
+              </figure>
+            </div>
+            <!-- คง hidden input เดิมไว้ เพื่อส่ง URL ให้ backend เหมือนโครงสร้างเดิม -->
+            <input type="hidden" id="event-picture" name="picture" />
+          </fieldset>
+
+          <label>แท็ก (คั่นด้วย ,) <input id="event-tags" placeholder="freshman,tu,workshop" /></label>
+          <!-- ✅ เพิ่มสองช่องนี้ -->
+          <label>ขั้นต่ำ (min_register)
+            <input type="number" id="event-min" min="0" step="1" />
+          </label>
+          <label>สูงสุด (max_register)
+            <input type="number" id="event-max" min="0" step="1" />
+          </label>
+        </div>
+        <label>รายละเอียด
+          <textarea id="event-detail" rows="4"></textarea>
+        </label>
+        <div class="actions">
+          <button type="button" class="btn" id="close-btn">ยกเลิก</button>
+          <button type="submit" class="btn primary" id="save-btn">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <script>
+    document.getElementById("logout-link")?.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      try{ await fetch("/api/auth/logout", { method:"POST", credentials:"include" }); }catch{}
+      location.href = "/auth";
+    });
+  </script>
+</body>
+</html>

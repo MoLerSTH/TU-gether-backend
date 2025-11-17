@@ -1,0 +1,270 @@
+<!-- app/templates/events/events.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="{{ url_for('static', path='css/events.css') }}">
+  <script src="/static/js/me_registrations.js"></script>
+  <!-- FAB Admin -->
+  <style>
+    .fab-admin {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      display: none;
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      place-items: center;
+      color: #fff;
+      text-decoration: none;
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 100%);
+      box-shadow: 0 12px 28px rgba(211, 47, 47, .35);
+      border: 1px solid rgba(255, 255, 255, .15);
+      transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+    }
+
+    .fab-admin:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: brightness(1.03);
+      box-shadow: 0 16px 36px rgba(211, 47, 47, .45);
+    }
+
+    .fab-admin i {
+      font-size: 28px;
+    }
+
+    .fab-admin.show {
+      display: grid;
+    }
+
+    /* ==== Clamp ข้อความรายละเอียด ==== */
+    .news-content .clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      position: relative;
+      padding-right: 18px;
+    }
+
+    .news-content .clamp-3.ellipsed::after {
+      content: '…';
+      position: absolute;
+      right: 6px;
+      bottom: 2px;
+      color: #b0b6c1;
+      /* เทาอ่อน */
+      font-weight: 600;
+      line-height: 1;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="sidebar close">
+    <header>
+      <div class="image-text">
+        <span class="image">
+          <img src="{{ url_for('static', path='img/IMG_3900.PNG') }}" alt="logo">
+        </span>
+        <div class="text header-text">
+          <span class="name">TU-Gether</span>
+          <span class="profession">Thammasat University</span>
+          <span id="user-name" style="display:block;font-weight:600;color:#d32f2f;"></span>
+        </div>
+      </div>
+      <i class='bx bx-chevron-right toggle'></i>
+    </header>
+
+    <div class="menu-bar">
+      <div class="menu">
+        <ul class="menu-links">
+          <li class="nav-links">
+            <a href="/main">
+              <i class='bx bx-home icon'></i>
+              <span class="text nav-text">Home</span>
+            </a>
+          </li>
+          <li class="nav-links">
+            <a href="/events">
+              <i class='bx bx-party icon'></i>
+              <span class="text nav-text">Event</span>
+            </a>
+          </li>
+          <li class="nav-links">
+            <a href="/me/registrations" id="link-my-registrations">
+              <i class='bx bx-history icon'></i>
+              <span class="text nav-text">History</span>
+            </a>
+          </li>
+
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+          <li class="nav-links">
+            <div></div>
+          </li>
+
+          <li class="nav-links">
+            <a href="#" id="logout-link">
+              <i class='bx bx-log-out icon'></i>
+              <span class="text nav-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="history-root" class="ml-[260px] transition-all duration-200 min-h-screen bg-gray-100 font-inter p-8">
+    <div class="max-w-6xl mx-auto">
+      <h1 class="text-2xl font-bold text-gray-900 mb-6">Event History</h1>
+
+      <!-- Search & Filter Row -->
+      <div class="flex flex-wrap gap-3 items-center mb-6">
+        <input id="search-text" type="text" placeholder="Search title..."
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+
+        <select id="status-filter"
+          class="border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">All statuses</option>
+          <option value="confirmed">Registered</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Attended">Attended</option>
+        </select>
+
+        <button id="reload-btn"
+          class="bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm hover:opacity-80 transition">
+          Reload
+        </button>
+      </div>
+
+      <!-- List Grid -->
+      <div id="list" class="flex flex-col gap-5"></div>
+
+
+      <!-- Card Template -->
+      <template id="card-tpl">
+        <div
+          class="w-full flex flex-col md:flex-row items-start md:items-center justify-between bg-white rounded-2xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 overflow-hidden border border-gray-100 mb-5">
+
+          <!-- รูปภาพกิจกรรม -->
+          <img data-field="picture" alt=""
+            class="w-full md:w-48 h-48 md:h-32 object-cover border-b-4 md:border-b-0 md:border-r-4 border-red-600">
+
+          <!-- ข้อมูลกิจกรรม -->
+          <div class="flex-1 px-6 py-4">
+            <div data-field="title" class="text-lg font-semibold text-gray-900 mb-2"></div>
+
+            <div class="flex items-center gap-2 text-gray-700 text-sm mb-1">
+              <i class='bx bx-calendar text-red-600'></i>
+              <span>วันที่จัดกิจกรรม:</span>
+              <strong data-field="meta"></strong>
+            </div>
+
+            <div class="flex items-center gap-2 text-gray-700 text-sm mb-1">
+              <i class='bx bx-time text-red-600'></i>
+              <span>เวลาที่ลงทะเบียน:</span>
+              <strong data-field="registered"></strong>
+            </div>
+
+            <div class="flex items-center gap-2 text-gray-700 text-sm mb-1">
+              <i class='bx bx-check-square text-red-600'></i>
+              <span>สถานะกิจจกรรม/ผู้ใช้:</span>
+              <div data-field="badges" class="flex flex-wrap items-center gap-1"></div>
+            </div>
+
+
+          </div>
+
+          <!-- ปุ่มด้านขวา -->
+          <div
+            class="flex md:flex-col flex-row justify-between md:items-end items-center gap-3 md:pl-5 border-t md:border-t-0 md:border-l border-gray-200 w-full md:w-auto px-5 py-3 md:py-0">
+            <button data-action="cancel"
+              class="flex items-center gap-2 bg-red-600 text-white font-medium text-sm px-3 py-1.5 rounded-lg hover:bg-red-700 transition">
+              <i class='bx bx-x-circle text-base'></i> CANCEL
+            </button>
+
+          </div>
+        </div>
+      </template>
+
+    </div>
+  </main>
+
+  <!-- FAB Admin -->
+  <a href="/admin" class="fab-admin" id="fab-admin" title="Admin Console"><i class='bx bxs-cog'></i></a>
+
+  <script>
+    function $(sel, root = document) { return root.querySelector(sel); }
+    function $all(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+    async function apiFetch(url, opts = {}) {
+      const r = await fetch(url, { credentials: "include", ...opts });
+      if (!r.ok) {
+        let msg = "เกิดข้อผิดพลาด";
+        try { const j = await r.json(); msg = j.detail || msg; } catch { }
+        const err = new Error(msg); err.status = r.status; throw err;
+      }
+      if (r.status === 204) return null;
+      try { return await r.json(); } catch { return null; }
+    }
+
+    const body = document.querySelector("body"),
+      sidebar = body.querySelector(".sidebar"),
+      toggle = body.querySelector(".toggle");
+    if (localStorage.getItem("sidebar") === "open") sidebar.classList.remove("close");
+    else sidebar.classList.add("close");
+    toggle.addEventListener("click", () => {
+      sidebar.classList.toggle("close");
+      localStorage.setItem("sidebar", sidebar.classList.contains("close") ? "close" : "open");
+    });
+
+    document.getElementById("logout-link")?.addEventListener("click", async (e) => {
+      e.preventDefault();
+      try { await fetch("/api/auth/logout", { method: "POST", credentials: "include" }); } catch { }
+      window.location.href = "/auth";
+    });
+
+    /** ใส่ชื่อ และโชว์เมนู/ปุ่ม Admin ถ้า role=admin **/
+    (async () => {
+      try {
+        const r = await fetch("/api/auth/me");
+        if (r.ok) {
+          const me = await r.json();
+          const el = document.getElementById("user-name");
+          if (el && me.display_name) el.textContent = `👤 ${me.display_name}`;
+          if (me.role === "admin") {
+            const fab = document.getElementById("fab-admin");
+            if (fab) fab.style.display = "grid";
+          }
+        }
+      } catch { }
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,452 @@
+/* app/static/css/main.css  */
+/* ให้ส่วน sidebar + layout เหมือน events.css เป๊ะ */
+
+/* ================== VARIABLES ================== */
+:root{
+  --body-color: #f5f5f5;
+  --sidebar-color: #ffffff;
+  --primary-color: #ff9615;
+  --accent-red: #d62828;
+  --primary-color-light:#fff7ec;
+  --text-color:#2b2b2b;
+  --text-muted:#6c757d;
+
+  --tran-02:all 0.2s ease;
+  --tran-03:all 0.3s ease;
+  --tran-04:all 0.4s ease;
+  --tran-05:all 0.5s ease;
+
+  /* modal */
+  --m-backdrop: rgba(9,12,20,.55);
+  --m-card: #ffffff;
+  --m-text: #0f172a;
+  --m-muted:#64748b;
+  --m-success:#16a34a;
+  --m-error:#dc2626;
+  --m-info:#2563eb;
+  --m-warn:#d97706;
+  --m-ring: rgba(37,99,235,.25);
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --m-backdrop: rgba(0,0,0,.55);
+    --m-card: #0f172a;
+    --m-text: #e5e7eb;
+    --m-muted:#94a3b8;
+    --m-ring: rgba(59,130,246,.35);
+  }
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  font-family:system-ui,Segoe UI,Arial,sans-serif;
+  height:100vh;
+  background:var(--body-color);
+  color:var(--text-color);
+}
+
+/* ถ้ามีรูป background */
+.background{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:-2;
+  opacity:.9;
+}
+
+/* ================== SIDEBAR ================== */
+.sidebar{
+  position: fixed; top: 0; left: 0; height: 100%; width: 250px;
+  padding: 10px 14px; background: var(--sidebar-color);
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  display: flex; flex-direction: column; justify-content: space-between;
+  transition: width 0.3s ease;
+  z-index: 10;
+}
+.sidebar.close { width: 88px; }
+
+/* header */
+.sidebar header{ position: relative; }
+.sidebar header .image-text{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar .image{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  flex:0 0 40px;   
+  
+}
+
+/* รูปโลโก้ให้เต็มกล่อง */
+.sidebar .image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:6px;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.header-text .name{
+  font-weight: 600;
+  color: var(--text-color);
+}
+.header-text .profession{
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* toggle button */
+.sidebar header .toggle{
+  position: absolute; top: 50%; right: -25px;
+  transform: translateY(-50%) rotate(180deg);
+  height: 25px; width: 25px; background: var(--primary-color);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; color: #fff; font-size: 20px; cursor: pointer;
+}
+.sidebar.close header .toggle{ transform: translateY(-50%); }
+
+/* text */
+.sidebar .text{
+  font-size: 16px; font-weight: 500; color: var(--text-color);
+  transition: var(--tran-05); white-space: nowrap;
+}
+.sidebar.close .text{ opacity: 0; }
+
+/* menu items */
+.sidebar li{
+  height: 50px; margin-top: 10px; list-style: none;
+  display: flex; align-items: center;
+}
+.sidebar li .icon{
+  display: flex; align-items: center; justify-content: center;
+  min-width: 60px; font-size: 20px;
+}
+.sidebar li a{
+  height: 100%; width: 100%; display: flex; align-items: center;
+  text-decoration: none; border-radius: 8px; transition: var(--tran-04);
+}
+.sidebar li a .icon,
+.sidebar li a .text{
+  color: var(--text-color); transition: var(--tran-02);
+}
+.sidebar li a:hover{
+  background: var(--primary-color-light);
+}
+.sidebar li a:hover .icon,
+.sidebar li a:hover .text{
+  color: var(--primary-color);
+}
+
+.sidebar .menu-bar{
+  display: flex; flex-direction: column; justify-content: space-between;
+  height: calc(100% - 50px);
+}
+
+/* ทำให้ sidebar ไม่โดน line-height ของ Tailwind แปลก ๆ */
+.sidebar,
+.sidebar *{
+  line-height: 1.2;
+}
+
+/* user name (ใช้ทั้งหน้า main และ events) */
+#user-name,
+.user-name{
+  margin-top:4px;
+  font-size:0.9rem;
+  font-weight:600;
+  color:#d32f2f;
+  white-space:nowrap;
+}
+
+/* ===== ตอนพับ sidebar: ตำแหน่ง header / โลโก้ ===== */
+.sidebar.close header{  
+  padding-left: 18px;              /* ที่บอกว่าตำแหน่งโอเคแล้ว ใช้อันนี้ได้เลย */
+}
+.sidebar.close header .image-text{
+  justify-content: center;         /* ให้โลโก้อยู่กลางแนวนอน */
+}
+
+/* ================== CONTENT LAYOUT ================== */
+.content{
+  margin-left:250px;
+  padding:30px;
+  transition:margin-left 0.3s ease;
+}
+.sidebar.close ~ .content{
+  margin-left:88px;
+}
+
+/* ตัวห่อด้านในของหน้า main – ใช้จัด slider + cards ให้อยู่กลาง */
+.main-inner{
+  max-width:1100px;
+  margin:0 auto;
+}
+
+/* ================== SLIDER ================== */
+.slider-container {
+  max-width: 100%;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  position: relative;
+  margin-bottom: 2rem;
+  background: #ffffff;
+  opacity: 0.8;
+}
+
+.slider-wrapper {
+  display: flex;
+  transition: transform 0.4s ease-in-out;
+}
+
+.slide {
+  min-width: 100%;
+  height: 350px;
+  position: relative;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  background: #ffffff;
+}
+
+/* dots */
+.slider-dots-container {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 30;
+
+  height: 32px;
+  padding: 6px 12px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  opacity: 0.7;
+  cursor: pointer;
+  transition:
+    width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.slider-dot:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.slider-dot.active {
+  width: 18px;
+  background: #ffffff;
+  opacity: 1;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+/* ================== MODAL / TOAST ================== */
+#toast-holder > div {
+  opacity: 0;
+  animation: toastIn .15s ease forwards;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 700;
+  box-shadow: 0 16px 28px rgba(0, 0, 0, .18);
+  backdrop-filter: blur(4px);
+}
+
+@keyframes toastIn {
+  from {
+    transform: translateY(-6px);
+    opacity: .0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--m-backdrop);
+  display: none;
+  opacity: 0;
+  transition: opacity .2s ease;
+  z-index: 10000;
+}
+
+.modal-backdrop.show {
+  display: block;
+  opacity: 1;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 10001;
+  pointer-events: none;
+}
+
+.modal .modal-card {
+  width: min(92vw, 520px);
+  background: var(--m-card);
+  color: var(--m-text);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .25);
+  border: 1px solid rgba(148, 163, 184, .25);
+  transform: translateY(16px) scale(.98);
+  opacity: 0;
+  pointer-events: auto;
+  animation: modalIn .18s ease forwards;
+}
+
+@keyframes modalIn {
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px 6px;
+}
+
+.modal-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  color: #fff;
+}
+
+.modal-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: .2px;
+}
+
+.modal-body {
+  padding: 2px 22px 16px;
+  color: var(--m-muted);
+  line-height: 1.65;
+}
+
+.modal-actions {
+  padding: 14px 16px 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, .35);
+  background: #fff;
+  color: #0f172a;
+  cursor: pointer;
+  font-weight: 600;
+  transition: box-shadow .15s ease, transform .1s ease, background .2s ease;
+}
+
+.modal-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .12);
+}
+
+.modal-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--m-ring);
+}
+
+.modal-btn.primary {
+  background: #111827;
+  color: #fff;
+  border-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modal-btn {
+    background: #0b1220;
+    color: #e5e7eb;
+  }
+
+  .modal-btn.primary {
+    background: #1f2937;
+  }
+}
+
+.modal.success .modal-icon { background: var(--m-success); }
+.modal.error  .modal-icon { background: var(--m-error); }
+.modal.info   .modal-icon { background: var(--m-info); }
+.modal.warn   .modal-icon { background: var(--m-warn); }
+/* ===== FIX: ไม่ให้โลโก้โดนกินขอบ และอยู่กลางตอนพับ ===== */
+
+/* กล่องห่อโลโก้ ให้กว้างพอ ๆ กับรูปเสมอ และจัดกลาง */
+.sidebar .image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;    /* สำคัญ: ห้ามแคบกว่าโลโก้ */
+}
+
+/* ตอนพับ sidebar ให้ header กับ image-text อยู่กลาง */
+.sidebar.close header {
+  padding-left: 0;     /* เอา padding ซ้ายที่เราเคยใส่ทิ้งไป */
+}
+
+.sidebar.close header .image-text {
+  justify-content: center;
+}
+
+/* โลโก้ตอนพับ – ขนาดเท่าเดิม นิดเดียวขยับเข้ามาขวาอีกนิดกันติดขอบ */
+.sidebar.close .image-text img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  flex-shrink: 0;
+  transform: translateX(1px);  /* ถ้ารู้สึกยังชิดไป ลด/เพิ่มได้ เช่น 0px หรือ 2px */
+}
